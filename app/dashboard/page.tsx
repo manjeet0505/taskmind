@@ -127,19 +127,6 @@ export default function Dashboard() {
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Header */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12 border-b border-white/10">
-        <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">✓</div>
-          TaskMind
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="px-6 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 transition">
-            Profile
-          </button>
-        </div>
-      </nav>
-
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8">
         {/* Welcome Section */}
