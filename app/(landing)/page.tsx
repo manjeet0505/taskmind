@@ -14,8 +14,8 @@ export default function Landing() {
           <a href="#features" className="text-slate-300 hover:text-white transition">Features</a>
           <a href="#ai" className="text-slate-300 hover:text-white transition">AI Integration</a>
           <a href="#pricing" className="text-slate-300 hover:text-white transition">Pricing</a>
-          <Link href="/login" className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 transition">Login</Link>
-          <Link href="/signup" className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold">Signup</Link>
+          <Link href="/auth/login" className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/20 transition">Login</Link>
+          <Link href="/auth/signup" className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold">Signup</Link>
         </div>
       </nav>
 
@@ -24,8 +24,8 @@ export default function Landing() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">Welcome to TaskMind</h1>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 leading-relaxed">A minimal AI-ready task manager foundation. Navigation and layouts are scaffolded for SaaS development.</p>
           <div className="flex gap-4 justify-center">
-            <Link href="/login" className="px-8 py-3 rounded-lg bg-white/10 text-white">Login</Link>
-            <Link href="/signup" className="px-8 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">Get Started</Link>
+            <Link href="/auth/login" className="px-8 py-3 rounded-lg bg-white/10 text-white">Login</Link>
+            <Link href="/auth/signup" className="px-8 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">Get Started</Link>
           </div>
         </div>
 
