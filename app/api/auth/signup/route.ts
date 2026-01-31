@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongoose";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
-import cookie from "cookie";
 
 export async function POST(req: Request) {
   console.log("➡️ SIGNUP API CALLED");

@@ -9,15 +9,15 @@ export const metadata = { title: "Dashboard - TaskMind" };
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
-  if (!token) redirect("/login");
+  if (!token) redirect("/auth/login");
   try {
     verifyToken(token);
   } catch (err) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <div className="flex">
         <Sidebar />
         <div className="flex-1 min-h-screen">

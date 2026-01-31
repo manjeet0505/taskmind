@@ -43,7 +43,7 @@ export default function SignupPage() {
         <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-white" />
         {error && <div className="text-sm text-red-400">{error}</div>}
         <div className="flex items-center justify-between">
-          <button disabled={loading} className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white">{loading ? "Creating..." : "Create account"}</button>
+          <button disabled={loading} className="px-6 py-3 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white">{loading ? "Creating..." : "Create account"}</button>
           <Link href="/auth/login" className="text-sm text-slate-300">Already have an account?</Link>
         </div>
       </form>

@@ -7,7 +7,7 @@ interface Task {
   title: string;
   description: string;
   priority: "low" | "medium" | "high";
-  status: "pending" | "in-progress" | "completed";
+  status: "pending" | "in-progress" | "done";
   dueDate: string;
   category: string;
   tags: string[];
@@ -92,9 +92,9 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/20 shadow-2xl">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-linear-to-br from-slate-800 to-slate-900 border border-white/20 shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 border-b border-white/10 p-6 flex items-center justify-between bg-gradient-to-b from-slate-800 to-slate-800/50">
+        <div className="sticky top-0 border-b border-white/10 p-6 flex items-center justify-between bg-linear-to-b from-slate-800 to-slate-800/50">
           <h2 className="text-2xl font-bold text-white">
             {task ? "Edit Task" : "Create New Task"}
           </h2>
@@ -135,7 +135,7 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
           </div>
 
           {/* Grid: Priority, Category, Due Date, Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Priority */}
             <div>
               <label className="block text-white font-semibold mb-2">Priority</label>
@@ -193,7 +193,7 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
               >
                 <option value="pending">Pending</option>
                 <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
+                <option value="done">Done</option>
               </select>
             </div>
           </div>
@@ -270,7 +270,7 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition"
+              className="flex-1 px-6 py-3 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition"
             >
               {task ? "Update Task" : "Create Task"}
             </button>

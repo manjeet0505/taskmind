@@ -5,11 +5,11 @@ interface Task {
   title: string;
   description: string;
   priority: "low" | "medium" | "high";
-  status: "pending" | "in-progress" | "completed";
-  dueDate: string;
+  status: "pending" | "in-progress" | "done";
+  dueDate: string | null;
   category: string;
   tags: string[];
-  createdAt: string;
+  createdAt: string | null;
 }
 
 interface TaskListProps {
@@ -40,7 +40,7 @@ export default function TaskList({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
+      case "done":
         return "bg-green-500/20 border-green-500/30";
       case "in-progress":
         return "bg-blue-500/20 border-blue-500/30";
@@ -53,7 +53,7 @@ export default function TaskList({
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "completed":
+      case "done":
         return "✓";
       case "in-progress":
         return "⚡";
@@ -64,7 +64,8 @@ export default function TaskList({
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "No due date";
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       month: "short",
@@ -96,13 +97,13 @@ export default function TaskList({
                 onClick={() => {
                   const nextStatus: Record<string, Task["status"]> = {
                     pending: "in-progress",
-                    "in-progress": "completed",
-                    completed: "pending",
+                    "in-progress": "done",
+                    done: "pending",
                   };
                   onStatusChange(task.id, nextStatus[task.status]);
                 }}
-                className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-sm flex-shrink-0 transition ${
-                  task.status === "completed"
+                className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-sm shrink-0 transition ${
+                  task.status === "done"
                     ? "bg-green-500 border-green-500 text-white"
                     : "border-white/30 text-white hover:border-white/50"
                 }`}
@@ -114,7 +115,7 @@ export default function TaskList({
               <div className="flex-1">
                 <h3
                   className={`text-lg font-semibold mb-1 ${
-                    task.status === "completed"
+                    task.status === "done"
                       ? "text-slate-400 line-through"
                       : "text-white"
                   }`}

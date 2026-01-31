@@ -5,8 +5,8 @@ interface Task {
   title: string;
   description: string;
   priority: "low" | "medium" | "high";
-  status: "pending" | "in-progress" | "completed";
-  dueDate: string;
+  status: "pending" | "in-progress" | "done";
+  dueDate: string | null;
   category: string;
   tags: string[];
   createdAt: string;
@@ -18,7 +18,7 @@ interface TaskStatsProps {
 
 export default function TaskStats({ tasks }: TaskStatsProps) {
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((t) => t.status === "completed").length;
+  const completedTasks = tasks.filter((t) => t.status === "done").length;
   const inProgressTasks = tasks.filter((t) => t.status === "in-progress").length;
   const pendingTasks = tasks.filter((t) => t.status === "pending").length;
   const highPriorityTasks = tasks.filter((t) => t.priority === "high").length;
@@ -61,12 +61,12 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
         >
           <div className="flex items-center justify-between mb-4">
             <span className="text-3xl">{stat.icon}</span>
-            <span className={`text-sm font-semibold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+            <span className={`text-sm font-semibold bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}>
               Stat
             </span>
           </div>
           <h3 className="text-slate-300 text-sm mb-2">{stat.label}</h3>
-          <p className={`text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+          <p className={`text-3xl font-bold bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}>
             {stat.value}
           </p>
         </div>

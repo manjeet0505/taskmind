@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import TaskList from "@/components/TaskList";
 import AIAssistant from "@/components/AIAssistant";
 import TaskModal from "@/components/TaskModal";
@@ -11,104 +11,100 @@ interface Task {
   title: string;
   description: string;
   priority: "low" | "medium" | "high";
-  status: "pending" | "in-progress" | "completed";
-  dueDate: string;
+  status: "pending" | "in-progress" | "done";
+  dueDate: string | null;
   category: string;
   tags: string[];
-  createdAt: string;
+  createdAt: string | null;
 }
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Design homepage mockup",
-      description: "Create UI mockups for the landing page",
-      priority: "high",
-      status: "in-progress",
-      dueDate: "2025-12-22",
-      category: "Design",
-      tags: ["UI", "Figma"],
-      createdAt: "2025-12-20",
-    },
-    {
-      id: "2",
-      title: "Implement authentication",
-      description: "Setup JWT authentication with Next.js",
-      priority: "high",
-      status: "pending",
-      dueDate: "2025-12-25",
-      category: "Backend",
-      tags: ["API", "Security"],
-      createdAt: "2025-12-20",
-    },
-    {
-      id: "3",
-      title: "Write database schema",
-      description: "Design and create database models",
-      priority: "medium",
-      status: "pending",
-      dueDate: "2025-12-23",
-      category: "Backend",
-      tags: ["Database", "SQL"],
-      createdAt: "2025-12-20",
-    },
-    {
-      id: "4",
-      title: "Setup CI/CD pipeline",
-      description: "Configure GitHub Actions for deployment",
-      priority: "medium",
-      status: "pending",
-      dueDate: "2025-12-26",
-      category: "DevOps",
-      tags: ["GitHub", "Deployment"],
-      createdAt: "2025-12-20",
-    },
-    {
-      id: "5",
-      title: "Update documentation",
-      description: "Write API documentation",
-      priority: "low",
-      status: "completed",
-      dueDate: "2025-12-21",
-      category: "Documentation",
-      tags: ["Docs"],
-      createdAt: "2025-12-20",
-    },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
 
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "in-progress" | "completed">("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "in-progress" | "done">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Filtered tasks client-side after server fetch
   const filteredTasks = tasks.filter((task) => {
     const matchesStatus = filterStatus === "all" || task.status === filterStatus;
     const matchesCategory = filterCategory === "all" || task.category === filterCategory;
-    const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      searchQuery.trim() === "" ||
+      (task.title && task.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesStatus && matchesCategory && matchesSearch;
   });
 
-  const handleAddTask = (newTask: Omit<Task, "id" | "createdAt">) => {
-    const task: Task = {
-      ...newTask,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-    setTasks([...tasks, task]);
-    setShowTaskModal(false);
+  const fetchTasks = async () => {
+    try {
+      setLoadingTasks(true);
+      const params = new URLSearchParams();
+      if (filterStatus && filterStatus !== "all") params.set("status", filterStatus);
+      if (filterCategory && filterCategory !== "all") params.set("category", filterCategory);
+      if (searchQuery && searchQuery.trim() !== "") params.set("search", searchQuery.trim());
+
+      const res = await fetch(`/api/tasks?${params.toString()}`, { method: "GET", headers: { "Accept": "application/json" } });
+      if (!res.ok) throw new Error("Failed to fetch tasks");
+      const data = await res.json();
+      setTasks(data.tasks || []);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to load tasks");
+    } finally {
+      setLoadingTasks(false);
+    }
   };
 
-  const handleUpdateTask = (updatedTask: Task) => {
-    setTasks(tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)));
-    setEditingTask(null);
-    setShowTaskModal(false);
+  const handleAddTask = async (newTask: Omit<Task, "id" | "createdAt">) => {
+    try {
+      const res = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTask),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create task");
+      setTasks((prev) => [data.task, ...prev]);
+      setShowTaskModal(false);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to create task");
+    }
   };
 
-  const handleDeleteTask = (taskId: string) => {
-    setTasks(tasks.filter((t) => t.id !== taskId));
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      const res = await fetch(`/api/tasks/${updatedTask.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update task");
+      setTasks((prev) => prev.map((t) => (t.id === data.task.id ? data.task : t)));
+      setEditingTask(null);
+      setShowTaskModal(false);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to update task");
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm("Are you sure you want to delete this task?")) return;
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete task");
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to delete task");
+    }
   };
 
   const handleEditTask = (task: Task) => {
@@ -116,10 +112,31 @@ export default function Dashboard() {
     setShowTaskModal(true);
   };
 
-  const categories = ["all", ...new Set(tasks.map((t) => t.category))];
+  const handleStatusChange = async (taskId: string, status: Task['status']) => {
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update status");
+      setTasks((prev) => prev.map((t) => (t.id === data.task.id ? data.task : t)));
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Failed to update status");
+    }
+  };
+
+  const categories = ["all", ...Array.from(new Set(tasks.map((t) => t.category)))];
+
+  // Fetch tasks on mount and when filters/search change
+  React.useEffect(() => {
+    fetchTasks();
+  }, [filterStatus, filterCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Fixed background blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -149,7 +166,7 @@ export default function Dashboard() {
                   setEditingTask(null);
                   setShowTaskModal(true);
                 }}
-                className="w-full px-6 py-4 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-2xl hover:shadow-purple-500/50 transition flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-2xl hover:shadow-purple-500/50 transition flex items-center justify-center gap-2"
               >
                 <span className="text-xl">+</span> Add New Task
               </button>
@@ -170,7 +187,7 @@ export default function Dashboard() {
               <div className="flex flex-wrap gap-2">
                 {/* Status Filter */}
                 <div className="flex gap-2">
-                  {["all", "pending", "in-progress", "completed"].map((status) => (
+                  {["all", "pending", "in-progress", "done"].map((status) => (
                     <button
                       key={status}
                       onClick={() => setFilterStatus(status as any)}
@@ -209,13 +226,7 @@ export default function Dashboard() {
               tasks={filteredTasks}
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
-              onStatusChange={(taskId, status) => {
-                setTasks(
-                  tasks.map((t) =>
-                    t.id === taskId ? { ...t, status } : t
-                  )
-                );
-              }}
+              onStatusChange={handleStatusChange}
             />
           </div>
 
