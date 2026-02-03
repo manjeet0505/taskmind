@@ -33,15 +33,15 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-4">Login</h1>
-      <p className="text-slate-300 mb-6">Sign in to access your dashboard</p>
+      <h1 className="text-2xl font-bold text-slate-900 mb-4">Login</h1>
+      <p className="text-slate-700 mb-6">Sign in to access your dashboard</p>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-white" />
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-white" />
-        {error && <div className="text-sm text-red-400">{error}</div>}
+        <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-900" />
+        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-900" />
+        {error && <div className="text-sm text-red-500">{error}</div>}
         <div className="flex items-center justify-between">
-              <button disabled={loading} className="px-6 py-3 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white">{loading ? "Signing in..." : "Sign in"}</button>
-          <Link href="/auth/signup" className="text-sm text-slate-300">Create account</Link>
+              <button disabled={loading} className="px-6 py-3 rounded-lg bg-indigo-600 text-white">{loading ? "Signing in..." : "Sign in"}</button>
+          <Link href="/auth/signup" className="text-sm text-slate-700">Create account</Link>
         </div>
       </form>
     </div>

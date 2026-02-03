@@ -97,3 +97,34 @@ Return the JSON object described in the system prompt.`;
 
   throw new Error("OpenAI response did not contain valid insights JSON");
 }
+
+export async function generateChatResponse(tasks: InsightTask[], message: string, today: Date): Promise<string> {
+  const client = getOpenAIClient();
+  if (!client) throw new Error("OpenAI API key not configured");
+
+  const dateStr = today.toISOString().split("T")[0];
+
+  const systemPrompt = `You are a helpful assistant that answers questions only using the provided tasks and today's date. Do NOT modify task data. Do NOT suggest database changes or write actions. Answer only from the provided tasks. If you cannot answer from the tasks, reply exactly: "I don't have enough information to answer that question based on the provided tasks." Keep replies short, actionable, and human-friendly.`;
+
+  const userPrompt = `Date: ${dateStr}\nTasks: ${JSON.stringify(tasks)}\n\nUser question: ${message}`;
+
+  const res = await client.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    max_tokens: 256,
+    temperature: 0.0,
+  });
+
+  const content = (res.choices && res.choices[0] && (res.choices[0].message as any)?.content) || "";
+  const cleaned = sanitizeModelOutput(content);
+
+  // Normalize the "insufficient data" message to a consistent phrase
+  if (cleaned.toLowerCase().includes("don't have enough") || cleaned.toLowerCase().includes("don\'t have enough")) {
+    return "I don't have enough information to answer that question based on the provided tasks.";
+  }
+
+  return cleaned;
+}

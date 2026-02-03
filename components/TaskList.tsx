@@ -28,13 +28,13 @@ export default function TaskList({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "bg-red-500/20 text-red-300 border-red-500/30";
+        return "bg-red-50 text-red-700 border-red-100";
       case "medium":
-        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+        return "bg-amber-50 text-amber-700 border-amber-100";
       case "low":
-        return "bg-green-500/20 text-green-300 border-green-500/30";
+        return "bg-emerald-50 text-emerald-700 border-emerald-100";
       default:
-        return "bg-slate-500/20 text-slate-300 border-slate-500/30";
+        return "bg-slate-50 text-slate-700 border-slate-100";
     }
   };
 
@@ -75,8 +75,8 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
-        <p className="text-slate-400 text-lg">No tasks found. Create one to get started! 🚀</p>
+      <div className="text-center py-12 p-6 rounded-xl glass-card text-slate-200">
+        <p className="text-slate-300 text-sm">No tasks found. Create one to get started! 🚀</p>
       </div>
     );
   }
@@ -86,9 +86,7 @@ export default function TaskList({
       {tasks.map((task) => (
         <div
           key={task.id}
-          className={`p-6 rounded-2xl backdrop-blur-xl border transition-all hover:shadow-lg ${getStatusColor(
-            task.status
-          )}`}
+          className={`p-5 rounded-xl glass-card card-hover`}
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-start gap-4 flex-1">
@@ -102,10 +100,10 @@ export default function TaskList({
                   };
                   onStatusChange(task.id, nextStatus[task.status]);
                 }}
-                className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-sm shrink-0 transition ${
+                className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center font-bold text-xs shrink-0 transition ${
                   task.status === "done"
                     ? "bg-green-500 border-green-500 text-white"
-                    : "border-white/30 text-white hover:border-white/50"
+                    : "border-slate-600/60 text-slate-100 bg-slate-900/40 hover:border-slate-400/70"
                 }`}
               >
                 {getStatusIcon(task.status)}
@@ -113,16 +111,14 @@ export default function TaskList({
 
               {/* Task Content */}
               <div className="flex-1">
-                <h3
-                  className={`text-lg font-semibold mb-1 ${
-                    task.status === "done"
-                      ? "text-slate-400 line-through"
-                      : "text-white"
-                  }`}
-                >
+                <h3 className={`text-sm font-semibold mb-1 ${
+                  task.status === "done"
+                    ? "text-slate-500 line-through"
+                    : "text-slate-50"
+                }`}>
                   {task.title}
                 </h3>
-                <p className="text-slate-300 text-sm mb-3">{task.description}</p>
+                <p className="text-slate-300 text-xs mb-3">{task.description}</p>
 
                 {/* Tags and Category */}
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -131,13 +127,13 @@ export default function TaskList({
                   )}`}>
                     {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                   </span>
-                  <span className="px-2 py-1 rounded text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  <span className="px-2 py-1 rounded text-xs font-medium bg-indigo-500/20 text-indigo-100 border border-indigo-400/60">
                     {task.category}
                   </span>
                   {task.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-1 rounded text-xs bg-white/10 text-slate-300 border border-white/20"
+                      className="px-2 py-1 rounded-full text-[11px] bg-slate-900/50 text-slate-200 border border-slate-600/70"
                     >
                       #{tag}
                     </span>
@@ -145,7 +141,7 @@ export default function TaskList({
                 </div>
 
                 {/* Due Date */}
-                <div className="flex items-center gap-2 text-sm text-slate-400">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
                   <span>📅 Due: {formatDate(task.dueDate)}</span>
                 </div>
               </div>
@@ -155,13 +151,13 @@ export default function TaskList({
             <div className="flex gap-2 ml-4">
               <button
                 onClick={() => onEditTask(task)}
-                className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition text-sm font-medium"
+                className="px-3 py-2 rounded-lg bg-indigo-500/90 hover:bg-indigo-400 text-white transition text-xs font-medium"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDeleteTask(task.id)}
-                className="px-3 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 transition text-sm font-medium border border-red-500/30"
+                className="px-3 py-2 rounded-lg bg-slate-900/40 border border-slate-600/70 text-slate-200 hover:bg-slate-100/5 transition text-xs font-medium"
               >
                 Delete
               </button>

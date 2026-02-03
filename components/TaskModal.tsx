@@ -91,16 +91,16 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-linear-to-br from-slate-800 to-slate-900 border border-white/20 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xl">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl glass-card-strong">
         {/* Header */}
-        <div className="sticky top-0 border-b border-white/10 p-6 flex items-center justify-between bg-linear-to-b from-slate-800 to-slate-800/50">
-          <h2 className="text-2xl font-bold text-white">
+        <div className="sticky top-0 border-b border-slate-700/60 p-6 flex items-center justify-between bg-slate-950/40 backdrop-blur-xl rounded-t-2xl">
+          <h2 className="text-xl font-semibold text-slate-50">
             {task ? "Edit Task" : "Create New Task"}
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition text-2xl"
+            className="text-slate-400 hover:text-slate-100 transition text-xl"
           >
             ✕
           </button>
@@ -110,27 +110,27 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-white font-semibold mb-2">Task Title *</label>
+            <label className="block text-slate-100 font-semibold mb-2 text-sm">Task Title *</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleInputChange}
               placeholder="What do you need to do?"
-              className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
+              className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-white font-semibold mb-2">Description</label>
+            <label className="block text-slate-100 font-semibold mb-2 text-sm">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleInputChange}
               placeholder="Add more details about this task..."
               rows={4}
-              className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition resize-none"
+              className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition resize-none"
             />
           </div>
 
@@ -138,12 +138,12 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Priority */}
             <div>
-              <label className="block text-white font-semibold mb-2">Priority</label>
+              <label className="block text-slate-100 font-semibold mb-2 text-sm">Priority</label>
               <select
                 name="priority"
                 value={formData.priority}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-400 transition"
+                className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 focus:outline-none focus:border-indigo-400 transition"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -153,12 +153,12 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
 
             {/* Category */}
             <div>
-              <label className="block text-white font-semibold mb-2">Category</label>
+              <label className="block text-slate-100 font-semibold mb-2 text-sm">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-400 transition"
+                className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 focus:outline-none focus:border-indigo-400 transition"
               >
                 <option value="Work">Work</option>
                 <option value="Personal">Personal</option>
@@ -172,24 +172,24 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
 
             {/* Due Date */}
             <div>
-              <label className="block text-white font-semibold mb-2">Due Date *</label>
+              <label className="block text-slate-100 font-semibold mb-2 text-sm">Due Date *</label>
               <input
                 type="date"
                 name="dueDate"
                 value={formData.dueDate}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-400 transition"
+                className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 focus:outline-none focus:border-indigo-400 transition"
               />
             </div>
 
             {/* Status */}
             <div>
-              <label className="block text-white font-semibold mb-2">Status</label>
+              <label className="block text-slate-100 font-semibold mb-2 text-sm">Status</label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-400 transition"
+                className="w-full px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 focus:outline-none focus:border-indigo-400 transition"
               >
                 <option value="pending">Pending</option>
                 <option value="in-progress">In Progress</option>
@@ -200,7 +200,7 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
 
           {/* Tags */}
           <div>
-            <label className="block text-white font-semibold mb-2">Tags</label>
+            <label className="block text-slate-100 font-semibold mb-2 text-sm">Tags</label>
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -218,12 +218,12 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
                   }
                 }}
                 placeholder="Add a tag and press Enter..."
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-purple-400 transition"
+                className="flex-1 px-4 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-indigo-400 transition"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-6 py-3 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition"
+                className="px-6 py-3 rounded-lg gradient-btn text-white text-sm font-medium transition"
               >
                 Add
               </button>
@@ -235,13 +235,13 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
                 {formData.tags.map((tag) => (
                   <div
                     key={tag}
-                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/30 border border-purple-500/50 text-purple-200 text-sm"
+                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/40 border border-slate-600/70 text-slate-100 text-xs"
                   >
                     #{tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="ml-1 hover:text-white transition"
+                      className="ml-1 text-slate-500 hover:text-slate-100 transition"
                     >
                       ✕
                     </button>
@@ -252,8 +252,8 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
           </div>
 
           {/* AI Suggestion Info */}
-          <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/30">
-            <p className="text-purple-200 text-sm">
+          <div className="p-4 rounded-lg bg-slate-950/40 border border-indigo-500/40">
+            <p className="text-slate-100 text-xs">
               💡 <strong>AI Tip:</strong> The AI assistant can help break down large tasks into smaller,
               manageable subtasks. Edit your task to get personalized suggestions!
             </p>
@@ -264,13 +264,13 @@ export default function TaskModal({ task, onClose, onSave }: TaskModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition border border-white/20"
+              className="flex-1 px-6 py-3 rounded-lg bg-slate-950/40 border border-slate-600/70 text-slate-100 text-sm font-medium transition hover:bg-slate-100/5"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition"
+              className="flex-1 px-6 py-3 rounded-lg gradient-btn text-white text-sm font-semibold transition"
             >
               {task ? "Update Task" : "Create Task"}
             </button>

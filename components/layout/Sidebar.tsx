@@ -8,16 +8,24 @@ export default function Sidebar() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   return (
-    <aside className="w-56 bg-white/5 border-r border-white/10 min-h-screen p-4 hidden md:flex flex-col justify-between">
-      <nav className="flex flex-col gap-2 text-sm">
-        <Link href="/dashboard" className="px-3 py-2 rounded-md text-white hover:bg-white/5">Overview</Link>
-        <Link href="/dashboard/tasks" className="px-3 py-2 rounded-md text-white hover:bg-white/5">Tasks</Link>
-        <Link href="/dashboard/ai" className="px-3 py-2 rounded-md text-white hover:bg-white/5">AI Assistant</Link>
-        <Link href="/dashboard/profile" className="px-3 py-2 rounded-md text-white hover:bg-white/5">Profile</Link>
+    <aside className="w-60 bg-transparent border-r border-slate-800/70 min-h-screen p-4 hidden md:flex flex-col justify-between glass-card">
+      <nav className="flex flex-col gap-1.5 text-sm">
+        <Link href="/dashboard" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
+          Overview
+        </Link>
+        <Link href="/dashboard/tasks" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
+          Tasks
+        </Link>
+        <Link href="/dashboard/ai" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
+          AI Assistant
+        </Link>
+        <Link href="/dashboard/profile" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
+          Profile
+        </Link>
       </nav>
 
       <div className="pt-4">
-        <div className="border-t border-white/10 mt-4 pt-4">
+        <div className="border-t border-slate-700/60 mt-4 pt-4">
           <button
             onClick={async () => {
               if (loading) return;
@@ -33,7 +41,7 @@ export default function Sidebar() {
               }
             }}
             disabled={loading}
-            className="w-full text-left px-3 py-2 rounded-md text-sm text-white bg-white/3 hover:bg-white/5"
+            className="w-full text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-200 border border-slate-600/70 bg-slate-900/40 hover:bg-slate-100/5 transition"
           >
             {loading ? "Logging out..." : "Logout"}
           </button>

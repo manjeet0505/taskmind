@@ -30,25 +30,25 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
       label: "Total Tasks",
       value: totalTasks,
       icon: "📋",
-      color: "from-purple-400 to-pink-400",
+      accent: "from-indigo-400 to-cyan-300",
     },
     {
       label: "In Progress",
       value: inProgressTasks,
       icon: "⚡",
-      color: "from-blue-400 to-cyan-400",
+      accent: "from-amber-300 to-orange-300",
     },
     {
       label: "Completed",
       value: completedTasks,
       icon: "✓",
-      color: "from-green-400 to-emerald-400",
+      accent: "from-emerald-300 to-teal-200",
     },
     {
       label: "Completion Rate",
       value: `${completionRate}%`,
       icon: "📈",
-      color: "from-yellow-400 to-orange-400",
+      accent: "from-pink-300 to-indigo-300",
     },
   ];
 
@@ -57,16 +57,18 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition hover:shadow-lg hover:shadow-purple-500/10"
+          className="p-5 rounded-xl glass-card card-hover"
         >
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-3xl">{stat.icon}</span>
-            <span className={`text-sm font-semibold bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}>
-              Stat
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-2xl">{stat.icon}</span>
+            <span
+              className={`text-[10px] uppercase tracking-[0.2em] text-slate-300/80 bg-linear-to-r ${stat.accent} bg-clip-text text-transparent`}
+            >
+              Metric
             </span>
           </div>
-          <h3 className="text-slate-300 text-sm mb-2">{stat.label}</h3>
-          <p className={`text-3xl font-bold bg-linear-to-r ${stat.color} bg-clip-text text-transparent`}>
+          <h3 className="text-slate-200 text-xs mb-1.5">{stat.label}</h3>
+          <p className={`text-2xl font-semibold text-slate-50`}>
             {stat.value}
           </p>
         </div>

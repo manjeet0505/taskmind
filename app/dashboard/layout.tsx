@@ -17,12 +17,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <div className="flex">
+    <div className="app-shell text-slate-100">
+      <div className="flex min-h-screen">
         <Sidebar />
-        <div className="flex-1 min-h-screen">
+        <div className="flex-1 flex flex-col">
           <Topbar />
-          <main className="p-6 max-w-7xl mx-auto">{children}</main>
+          <main className="p-6 md:p-8 max-w-7xl mx-auto w-full page-enter">
+            {children}
+          </main>
         </div>
       </div>
     </div>

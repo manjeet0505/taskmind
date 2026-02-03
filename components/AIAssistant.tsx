@@ -25,6 +25,46 @@ export default function AIAssistant({ tasks }: AIAssistantProps) {
   const hasTasks = tasks && tasks.length > 0;
   const buttonDisabled = insightsLoading || !hasTasks;
 
+  // Chat state (minimal, read-only)
+  const [chatInput, setChatInput] = React.useState("");
+  const [messages, setMessages] = React.useState<Array<{ from: "user" | "assistant"; text: string }>>([]);
+  const [chatLoading, setChatLoading] = React.useState(false);
+
+  const messagesRef = React.useRef<HTMLDivElement | null>(null);
+
+  async function sendChat() {
+    if (!chatInput.trim()) return;
+    const userText = chatInput.trim();
+    setMessages((m) => [...m, { from: "user", text: userText }]);
+    setChatInput("");
+    setChatLoading(true);
+    try {
+      const res = await fetch("/api/ai/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: userText }) });
+      const text = await res.text();
+      if (!res.ok) {
+        setMessages((m) => [...m, { from: "assistant", text: "I'm unable to answer right now. Please try again." }]);
+      } else {
+        setMessages((m) => [...m, { from: "assistant", text: text || "I'm unable to answer right now. Please try again." }]);
+      }
+    } catch (e) {
+      console.error("Chat request failed", e);
+      setMessages((m) => [...m, { from: "assistant", text: "I'm unable to answer right now. Please try again." }]);
+    } finally {
+      setChatLoading(false);
+    }
+  }
+
+  // Auto-scroll messages container when new messages arrive
+  React.useEffect(() => {
+    try {
+      if (messagesRef.current) {
+        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      }
+    } catch (e) {
+      // silent
+    }
+  }, [messages]);
+
   const pendingTasks = tasks.filter((t) => t.status === "pending");
   const highPriorityTasks = tasks.filter((t) => t.priority === "high");
   const overdueTasks = tasks.filter((t) => {
@@ -54,152 +94,128 @@ export default function AIAssistant({ tasks }: AIAssistantProps) {
   }
   return (
     <div className="space-y-6">
-      {/* AI Assistant Header */}
-      <div className="p-6 rounded-2xl bg-linear-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-400/30">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-3xl">🤖</span>
-          <div className="flex-1">
-            <h3 className="text-white font-bold">AI Insights for Today</h3>
-            <p className="text-sm text-slate-300">Based on your current tasks</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={fetchInsights} disabled={buttonDisabled} title={hasTasks ? "Get AI Insights" : "Create tasks to enable insights"} className="px-3 py-2 rounded-md bg-linear-to-r from-purple-500 to-pink-500 text-white text-sm disabled:opacity-60">{insightsLoading ? "Thinking..." : "Get AI Insights"}</button>
-          </div>
-        </div>
 
-        {/* Chat disabled for step-1: read-only AI insights only. */}
+      {/* Compact header for the AI column */}
+      <div className="mb-2">
+        <h4 className="text-slate-50 font-semibold">Assistant</h4>
+        <p className="text-slate-300/80 text-xs">Daily briefing and task-aware chat</p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="space-y-3">
-        <h4 className="text-white font-semibold px-2">Quick Insights</h4>
-
-        {pendingTasks.length > 0 && (
-          <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:border-blue-400/50 transition">
-            <p className="text-blue-200 text-sm">
-              ⚡ You have <strong>{pendingTasks.length}</strong> pending {pendingTasks.length === 1 ? "task" : "tasks"}. Start with the highest priority ones!
-            </p>
-          </div>
-        )}
-
-        {highPriorityTasks.length > 0 && (
-          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 hover:border-red-400/50 transition">
-            <p className="text-red-200 text-sm">
-              🔴 <strong>{highPriorityTasks.length}</strong> high priority {highPriorityTasks.length === 1 ? "task" : "tasks"} needs attention!
-            </p>
-          </div>
-        )}
-
-        {overdueTasks.length > 0 && (
-          <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/30 hover:border-orange-400/50 transition">
-            <p className="text-orange-200 text-sm">
-              ⏰ <strong>{overdueTasks.length}</strong> overdue {overdueTasks.length === 1 ? "task" : "tasks"}. Review and reschedule!
-            </p>
-          </div>
-        )}
-
-        {pendingTasks.length === 0 && highPriorityTasks.length === 0 && overdueTasks.length === 0 && (
-          <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30">
-            <p className="text-green-200 text-sm">✨ Great job! You're all caught up. Keep maintaining this momentum!</p>
-          </div>
-        )}
-      </div>
-
-      {/* AI Insights Card */}
-      {insights && (
-        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-          <h4 className="text-white font-semibold mb-2">Today's Focus</h4>
-
-          {/* Summary / Highlight */}
-          <div className="rounded-md bg-white/6 p-4 mb-3">
-            <p className="text-slate-200 text-lg leading-relaxed">{insights.summary}</p>
-          </div>
-
-          {insights.summary === "No insights available today" ? (
-            hasTasks ? (
-              <div className="text-slate-400 text-sm">No suggestions available at this time.</div>
-            ) : (
-              <div className="text-slate-400 text-sm">You don't have any tasks yet. Create your first task to receive AI insights.</div>
-            )
-          ) : (
-            <>
-              <h5 className="text-white font-medium">Focus Tasks</h5>
-              <ul className="mt-2 space-y-3">
-                {insights.focusTasks && insights.focusTasks.length > 0 ? (
-                  insights.focusTasks.map((f: any, i: number) => (
-                    <li key={i} className="text-slate-300">
-                      <div className="font-semibold">{f.title}</div>
-                      {f.reason && <div className="text-xs text-slate-400 mt-1">{f.reason}</div>}
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-slate-400 text-sm">No focus tasks suggested.</li>
-                )}
-              </ul>
-
-              {insights.warnings && insights.warnings.length > 0 && (
-                <div className="mt-4 p-3 rounded-md bg-yellow-900/10 border border-yellow-800/10">
-                  <h5 className="text-yellow-200 font-medium">Warnings</h5>
-                  <ul className="text-xs text-yellow-200 mt-2 space-y-1 list-disc list-inside">
-                    {insights.warnings.map((w: string, idx: number) => (
-                      <li key={idx}> {w}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {insights.productivityTip && (
-                <div className="mt-4 p-3 rounded-md bg-white/6 border border-white/8">
-                  <h5 className="text-white font-medium">Productivity Tip</h5>
-                  <div className="text-slate-300 text-sm mt-2">{insights.productivityTip}</div>
-                </div>
-              )}
-
-              <div className="mt-3 text-xs text-slate-400">Note: The assistant only reads your tasks and will never write to your data automatically.</div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* AI Suggestions */}
-      <div className="space-y-3">
-        <h4 className="text-white font-semibold px-2">Smart Suggestions</h4>
-
-        {suggestions.map((suggestion, index) => (
-          <div key={index} className="p-4 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition cursor-pointer group">
-            <div className="flex items-center justify-between">
-              <p className="text-slate-300 text-sm leading-relaxed"><span className="text-lg mr-2">{suggestion.icon}</span>{suggestion.text}</p>
-              {/* Offer an example action for complex tasks */}
-              {suggestion.text.includes("complex") && (
-                <button onClick={() => {
-                  // find first complex task
-                  const t = tasks.find((t) => t.description.length > 100 && t.status !== "done");
-                  if (!t) return alert("No complex task found");
-                  if (!confirm(`Would you like the assistant to suggest splitting '${t.title}' into subtasks? This will only create suggestions for you to review.`)) return;
-                  alert("Suggestion: Create 2-3 subtasks manually. (AI will not auto-create them.)");
-                }} className="px-2 py-1 rounded-md bg-white/5 text-xs text-white border border-white/10">Suggest split</button>
-              )}
+      {/* AI Insights — gradient-tinted card with glow */}
+      <div className="p-4 glass-card-strong fade-slide-up card-hover">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="ai-icon-glow">
+              <span className="text-2xl">🤖</span>
+            </div>
+            <div>
+              <h4 className="text-slate-50 font-semibold text-sm">AI Insights for Today</h4>
+              <p className="text-xs text-slate-200/80">Based on your current tasks</p>
             </div>
           </div>
-        ))}
+          <div>
+            <button
+              aria-label="Get AI Insights"
+              onClick={fetchInsights}
+              disabled={!hasTasks || insightsLoading}
+              className="px-3 py-1.5 rounded-full gradient-btn text-white text-[11px] font-semibold disabled:opacity-40"
+            >
+              {insightsLoading ? "Thinking..." : "Get AI Insights"}
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-3">
+          <div>
+            {insights ? (
+              <p className="text-slate-100 text-sm truncate-ellipsis">{insights.summary}</p>
+            ) : (
+              <p className="text-slate-300/80 text-sm">
+                Ask the assistant for a focus plan or risk scan.
+              </p>
+            )}
+          </div>
+
+          {/* Short focus list: max 2 items (muted) */}
+          {insights && insights.focusTasks && insights.focusTasks.length > 0 && (
+            <ul className="text-xs text-slate-200 list-disc list-inside mt-2 space-y-1.5">
+              {insights.focusTasks.slice(0, 2).map((f: any, i: number) => (
+                <li key={`focus-${i}`}>{f.title}{f.reason && <div className="text-xs text-slate-500 mt-0.5">{f.reason}</div>}</li>
+              ))}
+              {insights.focusTasks.length > 2 && (
+                <li className="text-[11px] text-slate-300/70">
+                  +{insights.focusTasks.length - 2} more
+                </li>
+              )}
+            </ul>
+          )}
+
+          {/* Minimal warnings & tip (muted) */}
+          {insights && insights.warnings && insights.warnings.length > 0 && (
+            <div className="mt-2 text-[11px] text-amber-200/90">
+              Warnings: {insights.warnings.slice(0, 2).join(" • ")}
+            </div>
+          )}
+          {insights && insights.productivityTip && (
+            <div className="mt-2 text-[11px] text-slate-200/80">
+              Tip: {insights.productivityTip}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Productivity Tips */}
-      <div className="p-4 rounded-2xl bg-linear-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/30">
-        <h4 className="text-amber-200 font-semibold mb-3 flex items-center gap-2">💡 Productivity Tip</h4>
-        <p className="text-amber-200 text-sm leading-relaxed">Break large tasks into smaller subtasks. This makes them less overwhelming and helps you track progress better. You typically complete tasks 23% faster this way!</p>
+      {/* Spacer + Divider between Insights and Chat */}
+      <div className="my-4 border-t border-slate-200" />
+
+      {/* AI Chat — conversation mode (soft gradient glass card) */}
+      <div className="p-4 glass-card fade-slide-up flex flex-col card-hover">
+        <h4 className="text-slate-50 font-semibold mb-1.5">AI Chat</h4>
+        <div className="text-xs text-slate-300/85 mb-3">
+          Ask about priorities, focus windows, or what to ship next. The assistant only uses your
+          task data.
+        </div>
+
+        <div ref={messagesRef} className="max-h-56 overflow-y-auto mb-3 space-y-3 p-1.5 pr-1">
+          {messages.length === 0 ? (
+            <div className="text-slate-400 text-sm">
+              Try:{" "}
+              <span className="text-slate-200">
+                “What should I focus on in the next 90 minutes?”
+              </span>
+            </div>
+          ) : (
+            messages.map((m, idx) => (
+              <div key={idx} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`inline-block px-3 py-2 rounded-2xl ${
+                    m.from === "user" ? "msg-user" : "msg-ai"
+                  } max-w-[40ch] wrap-break-word leading-relaxed message-pop text-xs`}
+                >
+                  {m.text}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="mt-auto flex gap-2">
+          <input aria-label="Ask the assistant" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendChat(); }} disabled={chatLoading || !hasTasks} placeholder={hasTasks ? "Ask about your tasks (e.g. 'What should I focus on today?')" : "Create tasks to enable chat"} className="flex-1 px-3 py-2 rounded-lg bg-white/90 text-slate-900 border border-gray-200" />
+          <button
+            onClick={sendChat}
+            disabled={!hasTasks || chatLoading}
+            className="px-3 py-2 rounded-xl gradient-btn text-white text-sm"
+          >
+            {chatLoading ? "…" : "Send"}
+          </button>
+        </div>
+
+        {/* Disclaimer moved to bottom of the card */}
+        <div className="mt-3 text-[10px] text-slate-300/70">
+          Note: The assistant only reads your tasks and will never write to your data automatically.
+        </div>
       </div>
 
-      {/* AI Features */}
-      <div className="p-4 rounded-2xl bg-linear-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30">
-        <h4 className="text-blue-200 font-semibold mb-3 flex items-center gap-2">🎯 AI Features Available</h4>
-        <ul className="space-y-2 text-blue-200 text-sm">
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Smart task prioritization</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Automatic scheduling (suggest-only)</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Task breakdown suggestions</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Progress predictions</li>
-        </ul>
-      </div>
+
     </div>
   );
 }

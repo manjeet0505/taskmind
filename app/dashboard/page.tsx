@@ -136,20 +136,20 @@ export default function Dashboard() {
   }, [filterStatus, filterCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Fixed background blobs */}
+    <div className="min-h-screen bg-transparent">
+      {/* Fixed background blobs (soft, animated) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 -left-6 w-130 h-130 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 float-slow"></div>
+        <div className="absolute top-0 right-12 w-105 h-105 bg-sky-100 rounded-full mix-blend-multiply filter blur-3xl opacity-10 float-slow" style={{ animationDelay: '1.2s' }}></div>
+        <div className="absolute -bottom-20 left-24 w-150 h-150 bg-rose-100 rounded-full mix-blend-multiply filter blur-3xl" style={{ opacity: 0.06 }}></div>
       </div>
 
       {/* Main Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Welcome back! 👋</h1>
-          <p className="text-slate-300">Here's what you need to focus on today</p>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Welcome back! 👋</h1>
+          <p className="text-slate-600">Here's what you need to focus on today</p>
         </div>
 
         {/* Stats Section */}
@@ -160,27 +160,27 @@ export default function Dashboard() {
           {/* Tasks Section */}
           <div className="lg:col-span-2">
             {/* Quick Add Task */}
-            <div className="mb-8 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-purple-400/30 transition">
+            <div className="mb-8 p-6 rounded-xl bg-white border border-gray-200 shadow-sm">
               <button
                 onClick={() => {
                   setEditingTask(null);
                   setShowTaskModal(true);
                 }}
-                className="w-full px-6 py-4 rounded-lg bg-linear-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-2xl hover:shadow-purple-500/50 transition flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition flex items-center justify-center gap-2"
               >
                 <span className="text-xl">+</span> Add New Task
               </button>
             </div>
 
             {/* Filters */}
-            <div className="mb-8 p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10">
+            <div className="mb-8 p-6 rounded-xl bg-white border border-gray-200 shadow-sm">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
                   placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-purple-400"
+                  className="px-4 py-3 rounded-lg bg-white border border-gray-100 text-slate-700 placeholder-slate-400 focus:outline-none focus:border-indigo-400"
                 />
               </div>
 
@@ -193,9 +193,9 @@ export default function Dashboard() {
                       onClick={() => setFilterStatus(status as any)}
                       className={`px-4 py-2 rounded-lg transition capitalize ${
                         filterStatus === status
-                          ? "bg-purple-500 text-white"
-                          : "bg-white/10 text-slate-300 hover:bg-white/20"
-                      } border border-white/10`}
+                          ? "bg-indigo-600 text-white"
+                          : "bg-white/10 text-slate-600 hover:bg-white/20"
+                      } border border-gray-100`}
                     >
                       {status}
                     </button>
@@ -210,9 +210,9 @@ export default function Dashboard() {
                       onClick={() => setFilterCategory(cat)}
                       className={`px-4 py-2 rounded-lg transition capitalize ${
                         filterCategory === cat
-                          ? "bg-pink-500 text-white"
-                          : "bg-white/10 text-slate-300 hover:bg-white/20"
-                      } border border-white/10`}
+                          ? "bg-indigo-600 text-white"
+                          : "bg-white/10 text-slate-600 hover:bg-white/20"
+                      } border border-gray-100`}
                     >
                       {cat === "all" ? "All Categories" : cat}
                     </button>
