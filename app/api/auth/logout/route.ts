@@ -8,7 +8,10 @@ export async function POST() {
     sameSite: "lax",
     path: "/",
     maxAge: 0,
+    expires: new Date(0),
   });
 
-  return NextResponse.json({ ok: true }, { status: 200, headers: { "Set-Cookie": serialized } });
+  const res = NextResponse.json({ ok: true }, { status: 200 });
+  res.headers.set("Set-Cookie", serialized);
+  return res;
 }

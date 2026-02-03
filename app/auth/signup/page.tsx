@@ -34,18 +34,71 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm">
-      <h1 className="text-2xl font-bold text-slate-900 mb-4">Create account</h1>
-      <p className="text-slate-600 mb-6">Create an account to get started</p>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-900" />
-        <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-900" />
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 text-slate-900" />
-        {error && <div className="text-sm text-red-500">{error}</div>}
-        <div className="flex items-center justify-between">
-          <button disabled={loading} className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white">{loading ? "Creating..." : "Create account"}</button>
-          <Link href="/auth/login" className="text-sm text-slate-600">Already have an account?</Link>
+    <div className="fade-slide-up">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-violet-500 via-fuchsia-500 to-cyan-400 flex items-center justify-center text-2xl shadow-lg shadow-violet-500/30 ring-2 ring-white/20">
+          ✦
         </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Create account</h1>
+          <p className="text-slate-400 text-sm">Get your AI-powered workspace in one step</p>
+        </div>
+      </div>
+
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <div>
+          <label className="block text-slate-300 text-sm font-medium mb-1.5">Name</label>
+          <input
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full px-4 py-3.5 rounded-xl bg-slate-800/60 border border-slate-500/50 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition"
+          />
+        </div>
+        <div>
+          <label className="block text-slate-300 text-sm font-medium mb-1.5">Email</label>
+          <input
+            placeholder="you@company.com"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full px-4 py-3.5 rounded-xl bg-slate-800/60 border border-slate-500/50 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition"
+          />
+        </div>
+        <div>
+          <label className="block text-slate-300 text-sm font-medium mb-1.5">Password</label>
+          <input
+            placeholder="••••••••"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full px-4 py-3.5 rounded-xl bg-slate-800/60 border border-slate-500/50 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition"
+          />
+        </div>
+
+        {error && (
+          <div className="py-2.5 px-3 rounded-lg bg-red-500/15 border border-red-400/30 text-red-300 text-sm">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-3.5 rounded-xl gradient-btn text-white font-semibold disabled:opacity-60 transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+        >
+          {loading ? "Creating account…" : "Create account"}
+        </button>
+
+        <p className="text-center text-slate-400 text-sm">
+          Already have an account?{" "}
+          <Link href="/auth/login" className="text-indigo-300 hover:text-white font-medium transition">
+            Sign in
+          </Link>
+        </p>
       </form>
     </div>
   );
