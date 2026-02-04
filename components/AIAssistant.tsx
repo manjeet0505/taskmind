@@ -199,9 +199,19 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
             {insights ? (
               <p className="text-slate-100 text-sm truncate-ellipsis">{insights.summary}</p>
             ) : (
-              <p className="text-slate-300/80 text-sm">
-                Ask the assistant for a focus plan or risk scan.
-              </p>
+              <div className="space-y-3">
+                <p className="text-slate-300/90 text-sm">
+                  AI insights help you decide what to focus on today. You can request them anytime—they&apos;re optional.
+                </p>
+                <button
+                  aria-label="Get AI Insights"
+                  onClick={fetchInsights}
+                  disabled={!hasTasks || insightsLoading}
+                  className="px-3 py-2 rounded-lg gradient-btn text-white text-xs font-semibold disabled:opacity-50"
+                >
+                  {insightsLoading ? "Thinking…" : "Get AI Insights"}
+                </button>
+              </div>
             )}
           </div>
 
@@ -234,12 +244,16 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
       </div>
 
       {/* AI Suggestions — optional, user must Apply or Ignore */}
-      {pendingSuggestions.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-slate-50 font-semibold text-xs uppercase tracking-wider">
-            AI suggests
-          </h4>
-          {pendingSuggestions.map(({ id, suggestion }) => {
+      <div className="space-y-2">
+        <h4 className="text-slate-50 font-semibold text-xs uppercase tracking-wider">
+          AI suggests
+        </h4>
+        {pendingSuggestions.length === 0 ? (
+          <p className="text-slate-400 text-xs py-2 px-1">
+            No AI suggestions right now. Your tasks look well organized.
+          </p>
+        ) : (
+          pendingSuggestions.map(({ id, suggestion }) => {
             const task = tasks.find((t) => t.id === suggestion.targetTaskId);
             const taskTitle = task?.title ?? "Task";
             const changeSummary = Object.entries(suggestion.suggestedChange)
@@ -274,9 +288,9 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
                 </div>
               </div>
             );
-          })}
-        </div>
-      )}
+          })
+        )}
+      </div>
 
       <div className="my-4 border-t border-slate-700/60" />
 
@@ -290,11 +304,22 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
 
         <div ref={messagesRef} className="max-h-56 overflow-y-auto mb-3 space-y-3 p-1.5 pr-1">
           {messages.length === 0 ? (
-            <div className="text-slate-400 text-sm">
-              Try:{" "}
-              <span className="text-slate-200">
-                “What should I focus on in the next 90 minutes?”
-              </span>
+            <div className="space-y-2">
+              <p className="text-slate-400 text-xs mb-2">Try asking:</p>
+              {[
+                "What should I work on today?",
+                "Which tasks are overdue?",
+                "Help me plan my day",
+              ].map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => setChatInput(prompt)}
+                  className="block w-full text-left px-3 py-2 rounded-lg border border-slate-600/60 text-slate-200 text-xs hover:bg-slate-700/40 transition"
+                >
+                  {prompt}
+                </button>
+              ))}
             </div>
           ) : (
             messages.map((m, idx) => (

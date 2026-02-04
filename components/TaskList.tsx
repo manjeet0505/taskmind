@@ -17,6 +17,7 @@ interface TaskListProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onStatusChange: (taskId: string, status: Task["status"]) => void;
+  onAddTask?: () => void;
 }
 
 export default function TaskList({
@@ -24,6 +25,7 @@ export default function TaskList({
   onEditTask,
   onDeleteTask,
   onStatusChange,
+  onAddTask,
 }: TaskListProps) {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -75,8 +77,19 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 p-6 rounded-xl glass-card text-slate-200">
-        <p className="text-slate-300 text-sm">No tasks found. Create one to get started! 🚀</p>
+      <div className="text-center py-12 px-6 rounded-xl glass-card border border-slate-700/50 bg-slate-900/30">
+        <p className="text-slate-50 font-medium mb-2">You don&apos;t have any tasks yet.</p>
+        <p className="text-slate-300 text-sm max-w-sm mx-auto mb-6">
+          Tasks are where you capture what matters. Add one and let AI help you prioritize and plan your day.
+        </p>
+        {onAddTask && (
+          <button
+            onClick={onAddTask}
+            className="px-5 py-2.5 rounded-xl gradient-btn text-white text-sm font-semibold"
+          >
+            Add task
+          </button>
+        )}
       </div>
     );
   }

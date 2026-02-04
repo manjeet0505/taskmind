@@ -220,6 +220,10 @@ export default function Dashboard() {
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
               onStatusChange={handleStatusChange}
+              onAddTask={() => {
+                setEditingTask(null);
+                setShowTaskModal(true);
+              }}
             />
           </div>
 
