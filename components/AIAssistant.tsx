@@ -14,23 +14,72 @@ interface Task {
   createdAt: string | null;
 }
 
-interface AIAssistantProps {
-  tasks: Task[];
+/** AI suggestion: human-in-the-loop only. User must Apply or Ignore. */
+export interface AISuggestion {
+  actionType: string;
+  targetTaskId: string;
+  suggestedChange: Record<string, unknown>;
+  reason: string;
 }
 
-export default function AIAssistant({ tasks }: AIAssistantProps) {
+interface AIAssistantProps {
+  tasks: Task[];
+  onTaskUpdated?: () => void;
+}
+
+export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) {
   const [insights, setInsights] = React.useState<null | any>(null);
   const [insightsLoading, setInsightsLoading] = React.useState(false);
 
   const hasTasks = tasks && tasks.length > 0;
-  const buttonDisabled = insightsLoading || !hasTasks;
 
-  // Chat state (minimal, read-only)
   const [chatInput, setChatInput] = React.useState("");
   const [messages, setMessages] = React.useState<Array<{ from: "user" | "assistant"; text: string }>>([]);
   const [chatLoading, setChatLoading] = React.useState(false);
 
+  /** Pending AI suggestions (from chat or insights). Each has a client id for dismiss/apply. */
+  const [pendingSuggestions, setPendingSuggestions] = React.useState<
+    Array<{ id: string; suggestion: AISuggestion }>
+  >([]);
+  const [applyingId, setApplyingId] = React.useState<string | null>(null);
+
   const messagesRef = React.useRef<HTMLDivElement | null>(null);
+
+  function addSuggestions(suggestions: AISuggestion[]) {
+    if (!suggestions?.length) return;
+    setPendingSuggestions((prev) => [
+      ...prev,
+      ...suggestions.map((s) => ({ id: `s-${Date.now()}-${Math.random().toString(36).slice(2)}`, suggestion: s })),
+    ]);
+  }
+
+  function dismissSuggestion(id: string) {
+    setPendingSuggestions((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  async function applySuggestion(id: string, suggestion: AISuggestion) {
+    setApplyingId(id);
+    try {
+      const res = await fetch("/api/ai/actions/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          targetTaskId: suggestion.targetTaskId,
+          suggestedChange: suggestion.suggestedChange,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to apply");
+      dismissSuggestion(id);
+      onTaskUpdated?.();
+    } catch (e) {
+      console.error("Apply action failed:", e);
+      alert((e as Error)?.message ?? "Failed to apply suggestion");
+    } finally {
+      setApplyingId(null);
+    }
+  }
 
   async function sendChat() {
     if (!chatInput.trim()) return;
@@ -39,13 +88,27 @@ export default function AIAssistant({ tasks }: AIAssistantProps) {
     setChatInput("");
     setChatLoading(true);
     try {
-      const res = await fetch("/api/ai/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: userText }) });
-      const text = await res.text();
+      const res = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ message: userText }),
+      });
+      const raw = await res.text();
       if (!res.ok) {
         setMessages((m) => [...m, { from: "assistant", text: "I'm unable to answer right now. Please try again." }]);
-      } else {
-        setMessages((m) => [...m, { from: "assistant", text: text || "I'm unable to answer right now. Please try again." }]);
+        return;
       }
+      let text: string;
+      let suggestions: AISuggestion[] = [];
+      try {
+        const parsed = JSON.parse(raw) as { text?: string; suggestions?: AISuggestion[] };
+        text = typeof parsed?.text === "string" ? parsed.text : raw;
+        if (Array.isArray(parsed?.suggestions)) addSuggestions(parsed.suggestions);
+      } catch {
+        text = raw;
+      }
+      setMessages((m) => [...m, { from: "assistant", text: text || "I'm unable to answer right now." }]);
     } catch (e) {
       console.error("Chat request failed", e);
       setMessages((m) => [...m, { from: "assistant", text: "I'm unable to answer right now. Please try again." }]);
@@ -79,14 +142,20 @@ export default function AIAssistant({ tasks }: AIAssistantProps) {
     try {
       setInsightsLoading(true);
       setInsights(null);
-      const res = await fetch("/api/ai/insights", { method: "POST", body: JSON.stringify({}), headers: { "Content-Type": "application/json" } });
+      const res = await fetch("/api/ai/insights", {
+        method: "POST",
+        body: JSON.stringify({}),
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+      });
       const data = await res.json();
-      // If API returned the graceful fallback object, normalize it
       if (!res.ok) throw new Error(data.error || "Failed to fetch insights");
       setInsights(data);
+      if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
+        addSuggestions(data.suggestions);
+      }
     } catch (err: any) {
       console.error(err);
-      // Graceful fallback shown in UI
       setInsights({ summary: "No insights available today" });
     } finally {
       setInsightsLoading(false);
@@ -164,8 +233,52 @@ export default function AIAssistant({ tasks }: AIAssistantProps) {
         </div>
       </div>
 
-      {/* Spacer + Divider between Insights and Chat */}
-      <div className="my-4 border-t border-slate-200" />
+      {/* AI Suggestions — optional, user must Apply or Ignore */}
+      {pendingSuggestions.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-slate-50 font-semibold text-xs uppercase tracking-wider">
+            AI suggests
+          </h4>
+          {pendingSuggestions.map(({ id, suggestion }) => {
+            const task = tasks.find((t) => t.id === suggestion.targetTaskId);
+            const taskTitle = task?.title ?? "Task";
+            const changeSummary = Object.entries(suggestion.suggestedChange)
+              .map(([k, v]) => `${k}: ${String(v)}`)
+              .join(", ");
+            return (
+              <div
+                key={id}
+                className="p-3 rounded-xl bg-slate-800/60 border border-slate-600/60 text-sm"
+              >
+                <p className="text-slate-200 mb-1.5">{suggestion.reason}</p>
+                <p className="text-slate-400 text-xs mb-2">
+                  <span className="font-medium text-slate-300">{taskTitle}</span>
+                  {changeSummary && ` · ${changeSummary}`}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => applySuggestion(id, suggestion)}
+                    disabled={applyingId === id}
+                    className="px-2.5 py-1.5 rounded-lg gradient-btn text-white text-xs font-medium disabled:opacity-60"
+                  >
+                    {applyingId === id ? "Applying…" : "Apply"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => dismissSuggestion(id)}
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-500/60 text-slate-300 text-xs hover:bg-slate-700/50 transition"
+                  >
+                    Ignore
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="my-4 border-t border-slate-700/60" />
 
       {/* AI Chat — conversation mode (soft gradient glass card) */}
       <div className="p-4 glass-card fade-slide-up flex flex-col card-hover">

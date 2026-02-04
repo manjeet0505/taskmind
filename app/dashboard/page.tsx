@@ -224,7 +224,7 @@ export default function Dashboard() {
           </div>
 
           {/* AI Assistant Sidebar */}
-          <AIAssistant tasks={tasks} />
+          <AIAssistant tasks={tasks} onTaskUpdated={fetchTasks} />
         </div>
       </div>
 

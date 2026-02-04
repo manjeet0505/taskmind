@@ -1,6 +1,8 @@
 import OpenAI from "openai";
+import type { AISuggestion } from "@/lib/ai-actions";
 
 export interface InsightTask {
+  id?: string;
   title: string;
   status: string;
   priority: string;
@@ -12,6 +14,12 @@ export interface InsightsResult {
   focusTasks: { title: string; reason: string }[];
   warnings: string[];
   productivityTip: string;
+  suggestions?: AISuggestion[];
+}
+
+export interface ChatResult {
+  text: string;
+  suggestions?: AISuggestion[];
 }
 
 let client: OpenAI | null = null;
@@ -42,15 +50,28 @@ function extractJson(text: string) {
   }
 }
 
-function validateShape(obj: any): obj is InsightsResult {
+function validateInsightSuggestion(s: unknown): s is AISuggestion {
+  if (!s || typeof s !== "object") return false;
+  const o = s as Record<string, unknown>;
+  if (typeof o.actionType !== "string") return false;
+  if (typeof o.targetTaskId !== "string") return false;
+  if (!o.suggestedChange || typeof o.suggestedChange !== "object") return false;
+  if (typeof o.reason !== "string") return false;
+  return true;
+}
+
+function validateShape(obj: unknown): obj is InsightsResult {
   if (!obj || typeof obj !== "object") return false;
-  if (typeof obj.summary !== "string") return false;
-  if (!Array.isArray(obj.focusTasks)) return false;
-  if (!Array.isArray(obj.warnings)) return false;
-  if (typeof obj.productivityTip !== "string") return false;
-  // Validate focusTasks items
-  if (!obj.focusTasks.every((f: any) => f && typeof f.title === "string" && typeof f.reason === "string")) return false;
-  if (!obj.warnings.every((w: any) => typeof w === "string")) return false;
+  const o = obj as Record<string, unknown>;
+  if (typeof o.summary !== "string") return false;
+  if (!Array.isArray(o.focusTasks)) return false;
+  if (!Array.isArray(o.warnings)) return false;
+  if (typeof o.productivityTip !== "string") return false;
+  if (!o.focusTasks.every((f: unknown) => f && typeof (f as any).title === "string" && typeof (f as any).reason === "string")) return false;
+  if (!o.warnings.every((w: unknown) => typeof w === "string")) return false;
+  if (o.suggestions !== undefined) {
+    if (!Array.isArray(o.suggestions) || !o.suggestions.every(validateInsightSuggestion)) return false;
+  }
   return true;
 }
 
@@ -60,12 +81,12 @@ export async function generateInsightsWithOpenAI(tasks: InsightTask[], today: Da
 
   const dateStr = today.toISOString().split("T")[0];
 
-  const systemPrompt = `You are a deterministic assistant that analyzes a user's task list and returns a STRICT JSON object with the following shape: {"summary": string, "focusTasks": [{"title": string, "reason": string}], "warnings": [string], "productivityTip": string }.
-- DO NOT modify the task objects.
-- DO NOT suggest any database changes or write actions.
-- ONLY return valid JSON (no markdown, no prose outside the JSON). If you cannot provide insights, return {"summary": "No insights available today"}.
-- Keep answers concise and explainable. Use the task titles exactly as provided.
-- Use temperature 0 and deterministic rules only.`;
+  const systemPrompt = `You are a deterministic assistant that analyzes a user's task list and returns a STRICT JSON object with this shape: {"summary": string, "focusTasks": [{"title": string, "reason": string}], "warnings": [string], "productivityTip": string, "suggestions": optional array }.
+- Each task in the input has "id" (string). You MUST use that exact id when suggesting an action.
+- "suggestions" is OPTIONAL. If you suggest an action, each item must be: {"actionType": "CHANGE_PRIORITY"|"RESCHEDULE_TASK"|"CHANGE_STATUS"|"SUGGEST_BREAKDOWN", "targetTaskId": string (use task id from input), "suggestedChange": object with only allowed fields (e.g. priority, status, dueDate), "reason": string}.
+- DO NOT modify the database. Only suggest; the user will decide.
+- ONLY return valid JSON (no markdown). If no suggestions, omit "suggestions" or use [].
+- Keep answers concise. Use task titles and ids exactly as provided.`;
 
   const userPrompt = `Date: ${dateStr}\nTasks: ${JSON.stringify(tasks)}\n
 Return the JSON object described in the system prompt.`;
@@ -98,13 +119,35 @@ Return the JSON object described in the system prompt.`;
   throw new Error("OpenAI response did not contain valid insights JSON");
 }
 
-export async function generateChatResponse(tasks: InsightTask[], message: string, today: Date): Promise<string> {
+function validateChatSuggestion(s: unknown): s is AISuggestion {
+  return validateInsightSuggestion(s);
+}
+
+function validateChatResult(obj: unknown): obj is ChatResult {
+  if (!obj || typeof obj !== "object") return false;
+  const o = obj as Record<string, unknown>;
+  if (typeof o.text !== "string") return false;
+  if (o.suggestions !== undefined) {
+    if (!Array.isArray(o.suggestions) || !o.suggestions.every(validateChatSuggestion)) return false;
+  }
+  return true;
+}
+
+export async function generateChatResponse(
+  tasks: InsightTask[],
+  message: string,
+  today: Date
+): Promise<ChatResult> {
   const client = getOpenAIClient();
   if (!client) throw new Error("OpenAI API key not configured");
 
   const dateStr = today.toISOString().split("T")[0];
 
-  const systemPrompt = `You are a helpful assistant that answers questions only using the provided tasks and today's date. Do NOT modify task data. Do NOT suggest database changes or write actions. Answer only from the provided tasks. If you cannot answer from the tasks, reply exactly: "I don't have enough information to answer that question based on the provided tasks." Keep replies short, actionable, and human-friendly.`;
+  const systemPrompt = `You are a helpful assistant that answers questions using the provided tasks and today's date. Return a STRICT JSON object: {"text": string, "suggestions": optional array}.
+- "text": your reply (short, actionable). If you cannot answer from the tasks, set text to: "I don't have enough information to answer that question based on the provided tasks."
+- "suggestions": OPTIONAL. Only include if it makes sense (e.g. user asks for recommendations). Each item: {"actionType": "CHANGE_PRIORITY"|"RESCHEDULE_TASK"|"CHANGE_STATUS"|"SUGGEST_BREAKDOWN", "targetTaskId": string (use task "id" from input), "suggestedChange": object with allowed fields only (priority, status, dueDate, etc.), "reason": string}.
+- Do NOT apply any changes. Only suggest; the user decides. Use task "id" from the tasks list for targetTaskId.
+- Return ONLY valid JSON, no markdown.`;
 
   const userPrompt = `Date: ${dateStr}\nTasks: ${JSON.stringify(tasks)}\n\nUser question: ${message}`;
 
@@ -114,17 +157,18 @@ export async function generateChatResponse(tasks: InsightTask[], message: string
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    max_tokens: 256,
+    max_tokens: 400,
     temperature: 0.0,
   });
 
-  const content = (res.choices && res.choices[0] && (res.choices[0].message as any)?.content) || "";
+  const content = (res.choices?.[0]?.message as { content?: string } | undefined)?.content ?? "";
   const cleaned = sanitizeModelOutput(content);
-
-  // Normalize the "insufficient data" message to a consistent phrase
-  if (cleaned.toLowerCase().includes("don't have enough") || cleaned.toLowerCase().includes("don\'t have enough")) {
-    return "I don't have enough information to answer that question based on the provided tasks.";
+  const parsed = extractJson(cleaned);
+  if (parsed && validateChatResult(parsed)) {
+    if (parsed.text.toLowerCase().includes("don't have enough")) {
+      parsed.text = "I don't have enough information to answer that question based on the provided tasks.";
+    }
+    return parsed;
   }
-
-  return cleaned;
+  return { text: cleaned || "I'm unable to answer right now. Please try again." };
 }

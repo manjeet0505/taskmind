@@ -23,8 +23,8 @@ export async function POST(req: Request) {
   const userId = (user as any)._id;
   const tasks = await Task.find({ userId }).lean();
 
-  // Build minimal task view for the AI
-  const minimal = tasks.map((t) => ({
+  const minimal = tasks.map((t: any) => ({
+    id: t._id.toString(),
     title: t.title,
     status: t.status,
     priority: t.priority,
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
           focusTasks: insights.focusTasks,
           warnings: insights.warnings,
           productivityTip: insights.productivityTip,
+          suggestions: [],
         },
         { status: 200 }
       );
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
         focusTasks: insights.focusTasks || [],
         warnings: insights.warnings || [],
         productivityTip: insights.productivityTip || "",
+        suggestions: insights.suggestions || [],
       },
       { status: 200 }
     );
