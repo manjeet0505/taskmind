@@ -1,8 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Landing() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="relative min-h-screen overflow-hidden font-sans app-shell text-slate-50">
       {/* Soft animated background */}
@@ -13,7 +25,13 @@ export default function Landing() {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-6 py-5 md:px-12 glass-card-strong border border-white/5 backdrop-blur-xl mx-4 md:mx-10 mt-4 rounded-2xl">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 border border-white/5 backdrop-blur-xl mx-4 md:mx-10 mt-4 rounded-2xl transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/5 border-white/10 shadow-lg shadow-black/10"
+            : "glass-card-strong"
+        }`}
+      >
         <Link
           href="/"
           className="text-2xl font-bold flex items-center gap-3 hover:opacity-95 transition"
@@ -48,7 +66,7 @@ export default function Landing() {
         </div>
       </nav>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24 space-y-24 md:space-y-28">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-32 md:pt-40 pb-16 md:pb-24 space-y-24 md:space-y-28">
         {/* HERO — AI focus helper */}
         <section className="grid grid-cols-1 lg:grid-cols-[1.25fr,minmax(0,1fr)] gap-12 items-center page-enter">
           <div>
@@ -57,11 +75,11 @@ export default function Landing() {
               AI-powered task management
             </p>
             <h1 className="text-4xl md:text-6xl font-semibold mb-5 leading-tight tracking-tight">
-              AI that helps you choose the right tasks, every day.
+              AI that helps you focus on the right tasks, every day.
             </h1>
             <p className="text-base md:text-lg text-slate-200/85 max-w-xl mb-8 leading-relaxed">
-              Plan smarter, prioritize better, and stay in control with explainable, task‑aware AI
-              that never acts without you.
+              Plan smarter, prioritize better, and stay in control. AI analyzes your tasks and
+              deadlines, then suggests what to focus on—you decide what to apply.
             </p>
             <div className="flex flex-wrap gap-4 items-center">
               <Link
@@ -287,24 +305,13 @@ export default function Landing() {
             <p className="text-sm font-semibold text-slate-50">
               Ready to plan your day with AI?
             </p>
-            <p className="text-xs text-slate-300/80 mt-1">
-              Spin up your workspace in seconds and let TaskMind help you choose what matters.
-            </p>
           </div>
-          <div className="flex gap-3">
-            <Link
-              href="/auth/signup"
-              className="px-6 py-2.5 rounded-xl gradient-btn text-xs font-semibold"
-            >
-              Get started
-            </Link>
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 rounded-xl border border-slate-500/70 text-xs text-slate-100/90 hover:bg-slate-100/5 transition"
-            >
-              View dashboard
-            </Link>
-          </div>
+          <Link
+            href="/auth/signup"
+            className="px-6 py-2.5 rounded-xl gradient-btn text-xs font-semibold"
+          >
+            Get started
+          </Link>
         </section>
       </main>
 
