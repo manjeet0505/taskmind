@@ -1,5 +1,6 @@
 import Sidebar from "../../components/layout/Sidebar";
 import Topbar from "../../components/layout/Topbar";
+import OnboardingWrapper from "../../components/OnboardingWrapper";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyToken } from "@/lib/auth";
@@ -18,6 +19,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="app-shell text-slate-100">
+      <OnboardingWrapper />
       <div className="flex min-h-screen">
         <Sidebar />
         <div className="flex-1 flex flex-col">
