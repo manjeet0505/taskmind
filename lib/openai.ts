@@ -22,6 +22,12 @@ export interface ChatResult {
   suggestions?: AISuggestion[];
 }
 
+export interface WeeklySummaryResult {
+  summary: string;
+  highlights: string[];
+  suggestion: string;
+}
+
 let client: OpenAI | null = null;
 
 export function getOpenAIClient(): OpenAI | null {
@@ -171,4 +177,77 @@ export async function generateChatResponse(
     return parsed;
   }
   return { text: cleaned || "I'm unable to answer right now. Please try again." };
+}
+
+function validateWeeklySummary(obj: unknown): obj is WeeklySummaryResult {
+  if (!obj || typeof obj !== "object") return false;
+  const o = obj as Record<string, unknown>;
+  if (typeof o.summary !== "string") return false;
+  if (!Array.isArray(o.highlights) || !o.highlights.every((h: unknown) => typeof h === "string")) return false;
+  if (typeof o.suggestion !== "string") return false;
+  return true;
+}
+
+export async function generateWeeklySummaryWithOpenAI(
+  tasks: InsightTask[],
+  weekStart: Date,
+  weekEnd: Date
+): Promise<WeeklySummaryResult> {
+  const client = getOpenAIClient();
+  if (!client) throw new Error("OpenAI API key not configured");
+
+  const weekStartStr = weekStart.toISOString().split("T")[0];
+  const weekEndStr = weekEnd.toISOString().split("T")[0];
+
+  const systemPrompt = `You are a thoughtful assistant that helps users reflect on their productivity. Return a STRICT JSON object with this shape: {"summary": string, "highlights": [string], "suggestion": string}.
+- "summary": A brief, reflective paragraph (2-3 sentences) about the user's week. Be encouraging and non-judgmental. Focus on patterns, not scores.
+- "highlights": An array of 2-3 positive observations about their task management (e.g., "You completed most tasks before deadlines", "You maintained focus on high-priority items").
+- "suggestion": One gentle, actionable productivity suggestion (e.g., "Consider breaking large tasks into smaller ones").
+- Use a calm, supportive tone. Do NOT use guilt-inducing language.
+- ONLY return valid JSON (no markdown).`;
+
+  const completedTasks = tasks.filter((t) => t.status === "done");
+  const pendingTasks = tasks.filter((t) => t.status !== "done");
+  const overdueTasks = tasks.filter((t) => {
+    if (!t.dueDate || t.status === "done") return false;
+    const due = new Date(t.dueDate);
+    return due < weekEnd && due >= weekStart;
+  });
+
+  const userPrompt = `Week: ${weekStartStr} to ${weekEndStr}
+Tasks this week:
+- Completed: ${completedTasks.length}
+- Still pending: ${pendingTasks.length}
+- Overdue: ${overdueTasks.length}
+
+Task details: ${JSON.stringify(tasks)}
+
+Return the JSON object described in the system prompt.`;
+
+  const res = await client.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    max_tokens: 400,
+    temperature: 0.3, // Slightly higher for more natural reflection
+  });
+
+  const content = (res.choices?.[0]?.message as { content?: string } | undefined)?.content ?? "";
+  const cleaned = sanitizeModelOutput(content);
+  const parsed = extractJson(cleaned);
+  if (parsed && validateWeeklySummary(parsed)) {
+    return parsed;
+  }
+
+  // If parsing failed, attempt to parse loose content
+  try {
+    const maybe = JSON.parse(cleaned);
+    if (validateWeeklySummary(maybe)) return maybe;
+  } catch (e) {
+    // ignore
+  }
+
+  throw new Error("OpenAI response did not contain valid weekly summary JSON");
 }

@@ -5,6 +5,7 @@ import TaskList from "@/components/TaskList";
 import AIAssistant from "@/components/AIAssistant";
 import TaskModal from "@/components/TaskModal";
 import TaskStats from "@/components/TaskStats";
+import WeeklySummary from "@/components/WeeklySummary";
 
 interface Task {
   id: string;
@@ -143,6 +144,11 @@ export default function Dashboard() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-50 mb-2">Welcome back! 👋</h1>
           <p className="text-slate-300">Here&apos;s what you need to focus on today</p>
+        </div>
+
+        {/* Weekly Summary */}
+        <div className="mb-8">
+          <WeeklySummary />
         </div>
 
         {/* Stats Section */}
