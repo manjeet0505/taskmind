@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { isAIEnabled, getAIPreferences } from "@/lib/ai-preferences";
 
 interface Task {
   id: string;
@@ -30,8 +31,18 @@ interface AIAssistantProps {
 export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) {
   const [insights, setInsights] = React.useState<null | any>(null);
   const [insightsLoading, setInsightsLoading] = React.useState(false);
+  const [aiEnabled, setAiEnabled] = React.useState(() => isAIEnabled());
 
   const hasTasks = tasks && tasks.length > 0;
+
+  // Listen for preference changes
+  React.useEffect(() => {
+    const handleChange = () => {
+      setAiEnabled(isAIEnabled());
+    };
+    window.addEventListener("aiPreferencesChanged", handleChange);
+    return () => window.removeEventListener("aiPreferencesChanged", handleChange);
+  }, []);
 
   const [chatInput, setChatInput] = React.useState("");
   const [messages, setMessages] = React.useState<Array<{ from: "user" | "assistant"; text: string }>>([]);
@@ -83,6 +94,11 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
 
   async function sendChat() {
     if (!chatInput.trim()) return;
+    if (!aiEnabled) {
+      setMessages((m) => [...m, { from: "assistant", text: "AI assistance is disabled. Enable it in AI Settings to use chat." }]);
+      setChatInput("");
+      return;
+    }
     const userText = chatInput.trim();
     setMessages((m) => [...m, { from: "user", text: userText }]);
     setChatInput("");
@@ -139,6 +155,10 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
   const suggestions = generateSuggestions(tasks, pendingTasks, highPriorityTasks, overdueTasks);
 
   async function fetchInsights() {
+    if (!aiEnabled) {
+      setInsights({ summary: "AI assistance is disabled. Enable it in AI Settings to get insights." });
+      return;
+    }
     try {
       setInsightsLoading(true);
       setInsights(null);
@@ -186,7 +206,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
             <button
               aria-label="Get AI Insights"
               onClick={fetchInsights}
-              disabled={!hasTasks || insightsLoading}
+              disabled={!hasTasks || insightsLoading || !aiEnabled}
               className="px-3 py-1.5 rounded-full gradient-btn text-white text-[11px] font-semibold disabled:opacity-40"
             >
               {insightsLoading ? "Thinking..." : "Get AI Insights"}
@@ -203,14 +223,26 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
                 <p className="text-slate-300/90 text-sm">
                   AI insights help you decide what to focus on today. You can request them anytime—they&apos;re optional.
                 </p>
-                <button
-                  aria-label="Get AI Insights"
-                  onClick={fetchInsights}
-                  disabled={!hasTasks || insightsLoading}
-                  className="px-3 py-2 rounded-lg gradient-btn text-white text-xs font-semibold disabled:opacity-50"
-                >
-                  {insightsLoading ? "Thinking…" : "Get AI Insights"}
-                </button>
+                {!aiEnabled ? (
+                  <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-600/40">
+                    <p className="text-slate-300 text-xs mb-2">
+                      AI assistance is disabled. Enable it in{" "}
+                      <a href="/dashboard/ai-settings" className="text-indigo-400 hover:text-indigo-300 underline">
+                        AI Settings
+                      </a>{" "}
+                      to get insights.
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    aria-label="Get AI Insights"
+                    onClick={fetchInsights}
+                    disabled={!hasTasks || insightsLoading}
+                    className="px-3 py-2 rounded-lg gradient-btn text-white text-xs font-semibold disabled:opacity-50"
+                  >
+                    {insightsLoading ? "Thinking…" : "Get AI Insights"}
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -337,11 +369,25 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
         </div>
 
         <div className="mt-auto flex gap-2">
-          <input aria-label="Ask the assistant" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendChat(); }} disabled={chatLoading || !hasTasks} placeholder={hasTasks ? "Ask about your tasks (e.g. 'What should I focus on today?')" : "Create tasks to enable chat"} className="flex-1 px-3 py-2 rounded-lg bg-white/90 text-slate-900 border border-gray-200" />
+          <input 
+            aria-label="Ask the assistant" 
+            value={chatInput} 
+            onChange={(e) => setChatInput(e.target.value)} 
+            onKeyDown={(e) => { if (e.key === 'Enter') sendChat(); }} 
+            disabled={chatLoading || !hasTasks || !aiEnabled} 
+            placeholder={
+              !aiEnabled 
+                ? "Enable AI in Settings to use chat" 
+                : hasTasks 
+                ? "Ask about your tasks (e.g. 'What should I focus on today?')" 
+                : "Create tasks to enable chat"
+            } 
+            className="flex-1 px-3 py-2 rounded-lg bg-white/90 text-slate-900 border border-gray-200 disabled:opacity-50" 
+          />
           <button
             onClick={sendChat}
-            disabled={!hasTasks || chatLoading}
-            className="px-3 py-2 rounded-xl gradient-btn text-white text-sm"
+            disabled={!hasTasks || chatLoading || !aiEnabled}
+            className="px-3 py-2 rounded-xl gradient-btn text-white text-sm disabled:opacity-50"
           >
             {chatLoading ? "…" : "Send"}
           </button>
