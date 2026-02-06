@@ -4,20 +4,30 @@ import Link from "next/link";
 
 export default function Topbar() {
   return (
-    <header className="w-full flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/40 backdrop-blur-xl">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/40">
-          ✺
-        </div>
-        <div className="text-lg font-semibold text-slate-50">TaskMind</div>
+    <header className="fixed top-0 left-0 md:left-60 right-0 h-16 z-20 flex items-center justify-between px-4 md:px-6 py-0">
+      {/* Unified glass background matching sidebar */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-indigo-950/90 to-slate-900/95 backdrop-blur-xl border-b border-indigo-500/20 shadow-[0_4px_30px_rgba(79,70,229,0.15)]" />
+      
+      {/* Subtle animated gradient overlay */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <div className="absolute top-0 left-0 w-64 h-full bg-linear-to-r from-violet-500/20 via-transparent to-transparent" />
       </div>
-      <div className="flex items-center gap-3">
-        <Link
-          href="/dashboard/profile"
-          className="px-3 py-2 rounded-md border border-slate-500/70 text-slate-100 bg-slate-900/40 hover:bg-slate-100/5 text-sm transition"
-        >
-          Profile
-        </Link>
+
+      <div className="relative flex items-center justify-between w-full">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-400/30">
+            ✺
+          </div>
+          <div className="text-lg font-semibold text-slate-50 tracking-tight">TaskMind</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/profile"
+            className="relative px-4 py-2 rounded-xl border border-indigo-500/30 text-slate-100 bg-indigo-500/10 hover:bg-indigo-500/20 hover:border-indigo-400/50 text-sm font-medium transition-all duration-200 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)]"
+          >
+            Profile
+          </Link>
+        </div>
       </div>
     </header>
   );

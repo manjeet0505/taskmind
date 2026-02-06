@@ -174,6 +174,16 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
       if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
         addSuggestions(data.suggestions);
       }
+      // Track how often the user views AI insights (frontend only)
+      try {
+        const key = "taskmind_ai_insights_viewed";
+        const raw = window.localStorage.getItem(key);
+        const current = raw != null ? parseInt(raw, 10) : 0;
+        const next = Number.isNaN(current) ? 1 : current + 1;
+        window.localStorage.setItem(key, String(next));
+      } catch {
+        // ignore storage errors
+      }
     } catch (err: any) {
       console.error(err);
       setInsights({ summary: "No insights available today" });

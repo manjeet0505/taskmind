@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
   const [loading, setLoading] = useState(false);
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     if (loading) return;
@@ -27,30 +29,58 @@ export default function Sidebar() {
     }
   };
 
-  return (
-    <aside className="w-60 bg-transparent border-r border-slate-800/70 min-h-screen p-4 hidden md:flex flex-col justify-between glass-card">
-      <nav className="flex flex-col gap-1.5 text-sm">
-        <Link href="/dashboard" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
-          Dashboard
-        </Link>
-        <Link href="/dashboard/ai-settings" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
-          Settings
-        </Link>
-        <Link href="/dashboard/profile" className="px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-100/5 hover:text-white transition">
-          Profile
-        </Link>
-      </nav>
+  const navItems = [
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/dashboard/ai-settings", label: "Settings" },
+    { href: "/dashboard/profile", label: "Profile" },
+  ];
 
-      <div className="pt-4">
-        <div className="border-t border-slate-700/60 mt-4 pt-4">
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={loading}
-            className="w-full text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-200 border border-slate-600/70 bg-slate-900/40 hover:bg-slate-100/5 transition"
-          >
-            {loading ? "Logging out..." : "Logout"}
-          </button>
+  return (
+    <aside className="fixed left-0 top-0 h-screen w-60 z-30 hidden md:flex flex-col justify-between p-4">
+      {/* Unified glass background matching navbar */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-indigo-950/90 to-slate-900/95 backdrop-blur-xl border-r border-indigo-500/20 shadow-[0_0_60px_rgba(79,70,229,0.15)]" />
+      
+      {/* Subtle animated gradient overlay */}
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-violet-500/20 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-cyan-500/15 via-transparent to-transparent" />
+      </div>
+
+      <div className="relative flex flex-col justify-between h-full">
+        <nav className="flex flex-col gap-1.5 text-sm pt-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href === "/dashboard" && pathname === "/dashboard");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`group relative px-3 py-2.5 rounded-xl text-slate-200 transition-all duration-200 ${
+                  isActive
+                    ? "text-white bg-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
+                    : "hover:bg-indigo-500/10 hover:text-white hover:shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+                }`}
+              >
+                {/* Active state gradient bar */}
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-linear-to-b from-violet-400 to-cyan-400 shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
+                )}
+                <span className="relative z-10">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="pt-4">
+          <div className="border-t border-indigo-500/20 mt-4 pt-4">
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={loading}
+              className="w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 border border-slate-600/50 bg-slate-800/30 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-200 transition-all duration-200 hover:shadow-[0_0_12px_rgba(239,68,68,0.2)]"
+            >
+              {loading ? "Logging out..." : "Logout"}
+            </button>
+          </div>
         </div>
       </div>
     </aside>

@@ -137,13 +137,13 @@ export default function Dashboard() {
   }, [filterStatus, filterCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-full">
       {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8">
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-50 mb-2">Welcome back! 👋</h1>
-          <p className="text-slate-300">Here&apos;s what you need to focus on today</p>
+          <h1 className="text-4xl font-bold text-slate-50 mb-2 tracking-tight">Welcome back! 👋</h1>
+          <p className="text-slate-300 text-lg">Here&apos;s what you need to focus on today</p>
         </div>
 
         {/* Weekly Summary */}
@@ -158,28 +158,28 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
           {/* Tasks Section */}
           <div className="lg:col-span-2">
-            {/* Quick Add Task */}
-            <div className="mb-8 p-6 rounded-xl glass-card card-hover">
+            {/* Quick Add Task — CTA with subtle glow */}
+            <div className="mb-8 p-6 rounded-2xl glass-card card-hover border border-indigo-500/20">
               <button
                 onClick={() => {
                   setEditingTask(null);
                   setShowTaskModal(true);
                 }}
-                className="w-full px-6 py-4 rounded-xl gradient-btn text-white font-semibold flex items-center justify-center gap-2"
+                className="w-full px-6 py-4 rounded-xl gradient-btn cta-glow text-white font-semibold flex items-center justify-center gap-2 transition-all duration-200"
               >
                 <span className="text-xl">+</span> Add New Task
               </button>
             </div>
 
-            {/* Filters */}
-            <div className="mb-8 p-6 rounded-xl glass-card card-hover">
+            {/* Filters — pill-style with active gradient */}
+            <div className="mb-8 p-6 rounded-2xl glass-card card-hover border border-indigo-500/15">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
                   placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-500/60 text-slate-50 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition"
+                  className="px-4 py-3 rounded-xl bg-slate-900/50 border border-indigo-500/20 text-slate-50 placeholder-slate-400 focus:outline-none focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/20 transition-all duration-200"
                 />
               </div>
 
@@ -190,10 +190,10 @@ export default function Dashboard() {
                     <button
                       key={status}
                       onClick={() => setFilterStatus(status as any)}
-                      className={`px-4 py-2 rounded-xl transition capitalize text-sm font-medium ${
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                         filterStatus === status
-                          ? "bg-indigo-500 text-white border border-indigo-400/80"
-                          : "bg-slate-800/60 text-slate-200 border border-slate-500/60 hover:bg-slate-700/60 hover:border-slate-400/60"
+                          ? "bg-linear-to-r from-indigo-500 to-violet-500 text-white border border-indigo-400/50 shadow-[0_0_16px_rgba(99,102,241,0.35)]"
+                          : "bg-slate-800/50 text-slate-200 border border-slate-600/50 hover:bg-slate-700/50 hover:border-indigo-500/30"
                       }`}
                     >
                       {status}
@@ -207,10 +207,10 @@ export default function Dashboard() {
                     <button
                       key={cat}
                       onClick={() => setFilterCategory(cat)}
-                      className={`px-4 py-2 rounded-xl transition capitalize text-sm font-medium ${
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                         filterCategory === cat
-                          ? "bg-indigo-500 text-white border border-indigo-400/80"
-                          : "bg-slate-800/60 text-slate-200 border border-slate-500/60 hover:bg-slate-700/60 hover:border-slate-400/60"
+                          ? "bg-linear-to-r from-indigo-500 to-violet-500 text-white border border-indigo-400/50 shadow-[0_0_16px_rgba(99,102,241,0.35)]"
+                          : "bg-slate-800/50 text-slate-200 border border-slate-600/50 hover:bg-slate-700/50 hover:border-indigo-500/30"
                       }`}
                     >
                       {cat === "all" ? "All Categories" : cat}

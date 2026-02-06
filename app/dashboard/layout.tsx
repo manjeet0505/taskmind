@@ -22,9 +22,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <OnboardingWrapper />
       <div className="flex min-h-screen">
         <Sidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col md:ml-60">
           <Topbar />
-          <main className="p-6 md:p-8 max-w-7xl mx-auto w-full page-enter">
+          <main className="content-area mt-16 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full page-enter min-h-[calc(100vh-4rem)]">
             {children}
           </main>
         </div>

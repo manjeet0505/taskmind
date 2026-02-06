@@ -57,18 +57,18 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="p-5 rounded-xl glass-card card-hover"
+          className="p-5 rounded-2xl glass-card card-hover border border-indigo-500/15"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-2xl">{stat.icon}</span>
+            <span className="text-2xl stat-icon-glow">{stat.icon}</span>
             <span
-              className={`text-[10px] uppercase tracking-[0.2em] text-slate-300/80 bg-linear-to-r ${stat.accent} bg-clip-text text-transparent`}
+              className={`text-[10px] uppercase tracking-[0.2em] text-slate-400 bg-linear-to-r ${stat.accent} bg-clip-text text-transparent`}
             >
               Metric
             </span>
           </div>
-          <h3 className="text-slate-200 text-xs mb-1.5">{stat.label}</h3>
-          <p className={`text-2xl font-semibold text-slate-50`}>
+          <h3 className="text-slate-300 text-xs font-medium mb-1.5">{stat.label}</h3>
+          <p className="text-2xl font-semibold text-slate-50 tracking-tight">
             {stat.value}
           </p>
         </div>

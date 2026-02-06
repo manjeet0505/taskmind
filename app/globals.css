@@ -33,6 +33,12 @@ body {
   overflow: hidden;
 }
 
+/* Smooth scrolling for main content */
+main {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 .app-shell::before {
   /* Soft mesh overlay to keep things alive but subtle */
   content: "";
@@ -126,12 +132,96 @@ body {
 /* Utility tweaks */
 .truncate-ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* Unified glass effect for sidebar and navbar */
+.sidebar-glass,
+.navbar-glass {
+  background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(30,41,59,0.92));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Subtle glow on hover for navigation items */
+.nav-item-glow:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+}
+
+/* ========== MAIN CONTENT AREA — same gradient family, reduced intensity ========== */
+.content-area {
+  background:
+    radial-gradient(ellipse 120% 80% at 20% 0%, rgba(99, 102, 241, 0.08), transparent 50%),
+    radial-gradient(ellipse 100% 60% at 80% 20%, rgba(139, 92, 246, 0.06), transparent 45%),
+    radial-gradient(ellipse 80% 70% at 50% 100%, rgba(56, 189, 248, 0.05), transparent 50%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.35) 100%);
+  min-height: 100%;
+}
+
+/* ========== UNIFIED CARD SYSTEM — floating intelligent modules ========== */
+.glass-card {
+  background: linear-gradient(155deg, rgba(15, 23, 42, 0.82), rgba(30, 41, 59, 0.78));
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.glass-card:hover {
+  border-color: rgba(129, 140, 248, 0.28);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    0 0 24px rgba(99, 102, 241, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.glass-card-strong {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.12), transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.1), transparent 50%),
+    linear-gradient(155deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.84));
+  border: 1px solid rgba(129, 140, 248, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 16px;
+  box-shadow:
+    0 6px 28px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 40px rgba(99, 102, 241, 0.06);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.glass-card-strong:hover {
+  border-color: rgba(129, 140, 248, 0.35);
+  box-shadow:
+    0 10px 36px rgba(0, 0, 0, 0.28),
+    0 0 32px rgba(99, 102, 241, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
 .card-hover {
-  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(15,23,42,0.9);
-  border-color: rgba(191, 219, 254, 0.9);
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(99, 102, 241, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+/* CTA glow for primary actions (e.g. Add Task) */
+.cta-glow {
+  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+.cta-glow:hover {
+  box-shadow: 0 12px 36px rgba(99, 102, 241, 0.45), 0 0 40px rgba(99, 102, 241, 0.2);
+}
+
+/* Stat card icon glow */
+.stat-icon-glow {
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
 }
 
