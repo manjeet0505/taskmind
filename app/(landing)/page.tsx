@@ -355,15 +355,20 @@ export default function Landing({ isAuthenticated = false }: LandingProps) {
           </div>
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
             <div className="flex gap-4">
-              <Link href="/auth/login" className="hover:text-slate-100 transition">
-                Login
-              </Link>
-              <Link href="/auth/signup" className="hover:text-slate-100 transition">
-                Signup
-              </Link>
-              <Link href="/dashboard" className="hover:text-slate-100 transition">
-                Dashboard
-              </Link>
+              {isAuthenticated ? (
+                <Link href="/dashboard" className="hover:text-slate-100 transition">
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/auth/login" className="hover:text-slate-100 transition">
+                    Login
+                  </Link>
+                  <Link href="/auth/signup" className="hover:text-slate-100 transition">
+                    Signup
+                  </Link>
+                </>
+              )}
             </div>
             <div className="flex gap-4 text-[11px] text-slate-400/90">
               <a
