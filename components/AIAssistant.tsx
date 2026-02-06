@@ -195,7 +195,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
     <div className="space-y-6">
       {/* Compact header for the AI column */}
       <div className="mb-2">
-        <h4 className="text-slate-50 font-semibold">Assistant</h4>
+        <h4 className="ai-heading font-semibold">Assistant</h4>
         <p className="text-slate-300/80 text-xs">Daily briefing and task-aware chat</p>
       </div>
 
@@ -207,8 +207,8 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
               <span className="text-2xl">🤖</span>
             </div>
             <div>
-              <h4 className="text-slate-50 font-semibold text-sm">AI Insights for Today</h4>
-              <p className="text-xs text-slate-200/80">Based on your current tasks</p>
+              <h4 className="ai-heading font-semibold text-sm">AI Insights for Today</h4>
+              <p className="ai-heading-subtle text-xs">Based on your current tasks</p>
             </div>
           </div>
           <div>
@@ -216,7 +216,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
               aria-label="Get AI Insights"
               onClick={fetchInsights}
               disabled={!hasTasks || insightsLoading || !aiEnabled}
-              className="px-3 py-1.5 rounded-full gradient-btn text-white text-[11px] font-semibold disabled:opacity-40"
+              className="px-3 py-1.5 rounded-full gradient-btn btn-hover-glow transition-smooth text-white text-[11px] font-semibold disabled:opacity-40"
             >
               {insightsLoading ? "Thinking..." : "Get AI Insights"}
             </button>
@@ -247,7 +247,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
                     aria-label="Get AI Insights"
                     onClick={fetchInsights}
                     disabled={!hasTasks || insightsLoading}
-                    className="px-3 py-2 rounded-lg gradient-btn text-white text-xs font-semibold disabled:opacity-50"
+                    className="px-3 py-2 rounded-lg gradient-btn btn-hover-glow transition-smooth text-white text-xs font-semibold disabled:opacity-50"
                   >
                     {insightsLoading ? "Thinking…" : "Get AI Insights"}
                   </button>
@@ -286,7 +286,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
 
       {/* AI Suggestions — optional, user must Apply or Ignore */}
       <div className="space-y-2">
-        <h4 className="text-slate-50 font-semibold text-xs uppercase tracking-wider">
+        <h4 className="ai-heading-subtle font-semibold text-xs uppercase tracking-wider">
           AI suggests
         </h4>
         {pendingSuggestions.length === 0 ? (
@@ -315,14 +315,14 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
                     type="button"
                     onClick={() => applySuggestion(id, suggestion)}
                     disabled={applyingId === id}
-                    className="px-2.5 py-1.5 rounded-lg gradient-btn text-white text-xs font-medium disabled:opacity-60"
+                    className="px-2.5 py-1.5 rounded-lg gradient-btn btn-hover-glow transition-smooth text-white text-xs font-medium disabled:opacity-60"
                   >
                     {applyingId === id ? "Applying…" : "Apply"}
                   </button>
                   <button
                     type="button"
                     onClick={() => dismissSuggestion(id)}
-                    className="px-2.5 py-1.5 rounded-lg border border-slate-500/60 text-slate-300 text-xs hover:bg-slate-700/50 transition"
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-500/60 text-slate-300 text-xs hover:bg-slate-700/50 transition-smooth"
                   >
                     Ignore
                   </button>
@@ -337,7 +337,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
 
       {/* AI Chat — conversation mode (soft gradient glass card) */}
       <div className="p-4 glass-card fade-slide-up flex flex-col card-hover">
-        <h4 className="text-slate-50 font-semibold mb-1.5">AI Chat</h4>
+        <h4 className="ai-heading font-semibold mb-1.5">AI Chat</h4>
         <div className="text-xs text-slate-300/85 mb-3">
           Ask about priorities, focus windows, or what to ship next. The assistant only uses your
           task data.
@@ -356,7 +356,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
                   key={prompt}
                   type="button"
                   onClick={() => setChatInput(prompt)}
-                  className="block w-full text-left px-3 py-2 rounded-lg border border-slate-600/60 text-slate-200 text-xs hover:bg-slate-700/40 transition"
+                  className="block w-full text-left px-3 py-2 rounded-lg border border-slate-600/60 text-slate-200 text-xs hover:bg-slate-700/40 transition-smooth"
                 >
                   {prompt}
                 </button>
@@ -396,7 +396,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
           <button
             onClick={sendChat}
             disabled={!hasTasks || chatLoading || !aiEnabled}
-            className="px-3 py-2 rounded-xl gradient-btn text-white text-sm disabled:opacity-50"
+            className="px-3 py-2 rounded-xl gradient-btn btn-hover-glow transition-smooth text-white text-sm disabled:opacity-50"
           >
             {chatLoading ? "…" : "Send"}
           </button>

@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default function Landing() {
+interface LandingProps {
+  isAuthenticated?: boolean;
+}
+
+export default function Landing({ isAuthenticated = false }: LandingProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -51,18 +55,29 @@ export default function Landing() {
           <a href="#features" className="text-slate-200/80 hover:text-white transition">
             Features
           </a>
-          <Link
-            href="/auth/login"
-            className="px-4 py-2 rounded-lg border border-slate-500/60 text-slate-100/90 hover:bg-slate-100/5 transition"
-          >
-            Login
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="px-6 py-2 rounded-lg gradient-btn text-white font-semibold"
-          >
-            Get started
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/dashboard"
+              className="px-6 py-2 rounded-lg gradient-btn text-white font-semibold"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="px-4 py-2 rounded-lg border border-slate-500/60 text-slate-100/90 hover:bg-slate-100/5 transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="px-6 py-2 rounded-lg gradient-btn text-white font-semibold"
+              >
+                Get started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -82,18 +97,29 @@ export default function Landing() {
               deadlines, then suggests what to focus on—you decide what to apply.
             </p>
             <div className="flex flex-wrap gap-4 items-center">
-              <Link
-                href="/auth/signup"
-                className="px-7 py-3 rounded-xl gradient-btn text-sm font-semibold"
-              >
-                Get started
-              </Link>
-              <Link
-                href="/auth/login"
-                className="px-6 py-3 rounded-xl border border-slate-400/60 text-slate-100/90 text-sm hover:bg-slate-100/5 transition"
-              >
-                Login
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  href="/dashboard"
+                  className="px-7 py-3 rounded-xl gradient-btn text-sm font-semibold"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/signup"
+                    className="px-7 py-3 rounded-xl gradient-btn text-sm font-semibold"
+                  >
+                    Get started
+                  </Link>
+                  <Link
+                    href="/auth/login"
+                    className="px-6 py-3 rounded-xl border border-slate-400/60 text-slate-100/90 text-sm hover:bg-slate-100/5 transition"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
             <p className="mt-4 text-xs text-slate-300/80">
               No auto-changes. Every AI suggestion is yours to accept or ignore.
@@ -307,10 +333,10 @@ export default function Landing() {
             </p>
           </div>
           <Link
-            href="/auth/signup"
+            href={isAuthenticated ? "/dashboard" : "/auth/signup"}
             className="px-6 py-2.5 rounded-xl gradient-btn text-xs font-semibold"
           >
-            Get started
+            {isAuthenticated ? "Go to Dashboard" : "Get started"}
           </Link>
         </section>
       </main>

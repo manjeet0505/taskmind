@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/** Public paths: allowed without authentication */
+/** Public paths: allowed without authentication. "/" is always public for everyone. */
 const PUBLIC_PATHS = new Set([
   "/",
   "/auth/login",
@@ -9,13 +9,18 @@ const PUBLIC_PATHS = new Set([
   "/signup",
 ]);
 
-/** Auth-only paths: logged-in users must be redirected to dashboard */
+/** Auth pages: logged-in users hitting these get redirected to dashboard */
 const AUTH_PAGE_PATHS = new Set([
   "/auth/login",
   "/auth/signup",
   "/login",
   "/signup",
 ]);
+
+/** Protected: only /dashboard (and children like /dashboard/profile, /dashboard/ai-settings) require auth */
+function isProtectedPath(pathname: string): boolean {
+  return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+}
 
 function isTokenValid(token: string | undefined | null): boolean {
   if (!token) return false;
@@ -50,8 +55,8 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Not logged in and trying to access protected route → send to login
-  if (!isAuthenticated && !PUBLIC_PATHS.has(pathname)) {
+  // Not logged in and trying to access protected route → send to login (dashboard, profile, settings)
+  if (!isAuthenticated && isProtectedPath(pathname)) {
     const url = req.nextUrl.clone();
     url.pathname = "/auth/login";
     const res = NextResponse.redirect(url);

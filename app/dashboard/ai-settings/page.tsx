@@ -27,16 +27,16 @@ export default function AISettingsPage() {
   return (
     <div className="max-w-3xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-50 mb-2 tracking-tight">AI Settings</h1>
-        <p className="text-slate-300 text-lg">
+      <div className="section-spacing-lg">
+        <h1 className="text-page-title text-3xl text-slate-50 mb-2">AI Settings</h1>
+        <p className="text-body text-lg">
           Control how AI assists you. All features remain optional and require your approval.
         </p>
       </div>
 
       {/* Save indicator */}
       {saved && (
-        <div className="mb-6 p-3 glass-card bg-emerald-500/10 text-emerald-200 text-sm fade-slide-up">
+        <div className="section-spacing p-3 glass-card bg-emerald-500/10 text-emerald-200 text-sm fade-slide-up">
           ✓ Settings saved
         </div>
       )}
@@ -46,8 +46,8 @@ export default function AISettingsPage() {
         <section className="p-6 glass-card card-hover">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-slate-50 mb-2">AI Assistance</h2>
-              <p className="text-slate-300 text-sm">
+              <h2 className="text-section-title text-xl ai-heading mb-2">AI Assistance</h2>
+              <p className="text-body text-sm">
                 Turn AI suggestions on or off. You can always manage tasks manually.
               </p>
             </div>
@@ -72,12 +72,12 @@ export default function AISettingsPage() {
 
         {/* Section 2: Insights Frequency */}
         <section className="p-6 glass-card card-hover">
-          <h2 className="text-xl font-semibold text-slate-50 mb-2">Insights Frequency</h2>
-          <p className="text-slate-400 text-sm mb-4">
+          <h2 className="text-section-title text-xl text-slate-50 mb-2">Insights Frequency</h2>
+          <p className="text-body text-sm mb-4">
             Choose how often you want AI insights.
           </p>
           <div className="space-y-3">
-            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition hover:bg-slate-800/40"
+            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-smooth hover:bg-slate-800/40"
               style={{
                 borderColor: preferences.insightsFrequency === "daily" ? "rgba(129, 140, 248, 0.5)" : "rgba(148, 163, 184, 0.3)",
                 backgroundColor: preferences.insightsFrequency === "daily" ? "rgba(99, 102, 241, 0.1)" : "transparent",
@@ -96,7 +96,7 @@ export default function AISettingsPage() {
                 <div className="text-slate-400 text-xs">AI will provide insights automatically each day</div>
               </div>
             </label>
-            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition hover:bg-slate-800/40"
+            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-smooth hover:bg-slate-800/40"
               style={{
                 borderColor: preferences.insightsFrequency === "manual" ? "rgba(129, 140, 248, 0.5)" : "rgba(148, 163, 184, 0.3)",
                 backgroundColor: preferences.insightsFrequency === "manual" ? "rgba(99, 102, 241, 0.1)" : "transparent",
@@ -127,12 +127,12 @@ export default function AISettingsPage() {
 
         {/* Section 3: AI Response Style */}
         <section className="p-6 glass-card card-hover">
-          <h2 className="text-xl font-semibold text-slate-50 mb-2">AI Response Style</h2>
-          <p className="text-slate-400 text-sm mb-4">
+          <h2 className="text-section-title text-xl text-slate-50 mb-2">AI Response Style</h2>
+          <p className="text-body text-sm mb-4">
             Control how much detail the AI provides.
           </p>
           <div className="space-y-3">
-            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition hover:bg-slate-800/40"
+            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-smooth hover:bg-slate-800/40"
               style={{
                 borderColor: preferences.responseStyle === "short" ? "rgba(129, 140, 248, 0.5)" : "rgba(148, 163, 184, 0.3)",
                 backgroundColor: preferences.responseStyle === "short" ? "rgba(99, 102, 241, 0.1)" : "transparent",
@@ -151,7 +151,7 @@ export default function AISettingsPage() {
                 <div className="text-slate-400 text-xs">Brief, actionable responses</div>
               </div>
             </label>
-            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition hover:bg-slate-800/40"
+            <label className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-smooth hover:bg-slate-800/40"
               style={{
                 borderColor: preferences.responseStyle === "detailed" ? "rgba(129, 140, 248, 0.5)" : "rgba(148, 163, 184, 0.3)",
                 backgroundColor: preferences.responseStyle === "detailed" ? "rgba(99, 102, 241, 0.1)" : "transparent",
@@ -185,7 +185,7 @@ export default function AISettingsPage() {
           <div className="flex items-start gap-4">
             <div className="text-2xl shrink-0">🔒</div>
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-slate-50 mb-3">Transparency & Trust</h2>
+              <h2 className="text-section-title text-xl text-slate-50 mb-3">Transparency & Trust</h2>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="text-green-400 mt-0.5">✓</div>

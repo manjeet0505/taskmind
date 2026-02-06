@@ -14,12 +14,12 @@ export default function Topbar() {
       </div>
 
       <div className="relative flex items-center justify-between w-full">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-400/30">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-500 via-violet-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/50 ring-2 ring-indigo-400/30 transition-all duration-200 group-hover:shadow-indigo-500/60 group-hover:ring-indigo-400/50">
             ✺
           </div>
-          <div className="text-lg font-semibold text-slate-50 tracking-tight">TaskMind</div>
-        </div>
+          <span className="text-lg font-semibold text-slate-50 tracking-tight group-hover:text-white transition-colors duration-200">TaskMind</span>
+        </Link>
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/profile"

@@ -140,9 +140,9 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
   }, [name]);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto">
       {/* Profile hero — premium account presence */}
-      <section className="p-6 md:p-10 glass-card-strong card-hover relative overflow-hidden">
+      <section className="section-spacing-lg p-6 md:p-10 glass-card-strong card-hover relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-40">
           <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-linear-to-tr from-indigo-500/40 via-violet-500/30 to-cyan-400/40 blur-3xl float-slow" />
           <div className="absolute -bottom-24 -left-16 w-72 h-72 rounded-full bg-linear-to-tr from-sky-400/25 via-emerald-400/20 to-indigo-500/20 blur-3xl float-slow" />
@@ -160,10 +160,10 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
             </div>
 
             <div>
-              <h1 className="text-2xl md:text-4xl font-semibold text-slate-50 tracking-tight">
+              <h1 className="text-page-title text-2xl md:text-4xl text-slate-50 tracking-tight">
                 {name || "Your workspace"}
               </h1>
-              <p className="text-slate-300 text-sm md:text-base mt-2">
+              <p className="text-body text-sm md:text-base mt-2">
                 Your AI-assisted productivity workspace
               </p>
               <div className="mt-3 h-px w-12 bg-indigo-500/40 rounded-full" />
@@ -186,12 +186,12 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
       </section>
 
       {/* Two-column layout: AI status + activity snapshot */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-6 section-spacing-lg">
         {/* AI Assistant Status */}
         <section className="p-6 glass-card card-hover space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">
+              <h2 className="text-section-title text-sm text-slate-50 tracking-[0.16em] uppercase ai-heading-subtle">
                 AI Assistant Status
               </h2>
               <p className="text-slate-300 text-xs mt-1">
@@ -234,7 +234,7 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
         <section className="p-6 glass-card card-hover space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">
+              <h2 className="text-section-title text-sm text-slate-50 tracking-[0.16em] uppercase">
                 Activity Snapshot
               </h2>
               <p className="text-slate-300 text-xs mt-1">
@@ -278,20 +278,20 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
       </div>
 
       {/* Account actions — intentional buttons */}
-      <section className="p-6 md:p-7 glass-card card-hover space-y-4">
+      <section className="section-spacing p-6 md:p-7 glass-card card-hover space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">
+            <h2 className="text-section-title text-sm text-slate-50 tracking-[0.16em] uppercase">
               Account Actions
             </h2>
-            <p className="text-slate-300 text-xs mt-1.5 max-w-md">
+            <p className="text-body text-xs mt-1.5 max-w-md">
               You remain in control of your data, sessions, and how AI participates in your workflow.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/dashboard/ai-settings"
-              className="px-4 py-2.5 rounded-xl border border-indigo-500/40 bg-indigo-500/15 text-slate-100 text-sm font-medium hover:bg-indigo-500/25 hover:border-indigo-400/50 transition-all duration-200 hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]"
+              className="px-4 py-2.5 rounded-xl border border-indigo-500/40 bg-indigo-500/15 text-slate-100 text-sm font-medium hover:bg-indigo-500/25 hover:border-indigo-400/50 transition-smooth hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]"
             >
               Open AI Settings
             </Link>
