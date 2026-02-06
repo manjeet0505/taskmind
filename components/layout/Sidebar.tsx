@@ -37,8 +37,8 @@ export default function Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-60 z-30 hidden md:flex flex-col justify-between p-4">
-      {/* Unified glass background matching navbar */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-indigo-950/90 to-slate-900/95 backdrop-blur-xl border-r border-indigo-500/20 shadow-[0_0_60px_rgba(79,70,229,0.15)]" />
+      {/* Unified glass background matching navbar — blends into page */}
+      <div className="absolute inset-0 bg-linear-to-br from-slate-900/85 via-indigo-950/80 to-slate-900/85 backdrop-blur-xl border-r border-indigo-500/10 shadow-[0_0_40px_rgba(79,70,229,0.1)]" />
       
       {/* Subtle animated gradient overlay */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">

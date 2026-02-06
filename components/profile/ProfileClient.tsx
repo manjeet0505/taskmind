@@ -142,7 +142,7 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       {/* Profile hero — premium account presence */}
-      <section className="p-6 md:p-10 rounded-2xl glass-card-strong card-hover border border-indigo-500/25 relative overflow-hidden">
+      <section className="p-6 md:p-10 glass-card-strong card-hover relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-40">
           <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-linear-to-tr from-indigo-500/40 via-violet-500/30 to-cyan-400/40 blur-3xl float-slow" />
           <div className="absolute -bottom-24 -left-16 w-72 h-72 rounded-full bg-linear-to-tr from-sky-400/25 via-emerald-400/20 to-indigo-500/20 blur-3xl float-slow" />
@@ -188,7 +188,7 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
       {/* Two-column layout: AI status + activity snapshot */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* AI Assistant Status */}
-        <section className="p-6 rounded-2xl glass-card card-hover border border-indigo-500/15 space-y-4">
+        <section className="p-6 glass-card card-hover space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">
@@ -224,14 +224,14 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-indigo-500/20 text-xs text-slate-300 leading-relaxed">
+          <div className="mt-4 pt-4 border-t border-slate-700/30 text-xs text-slate-300 leading-relaxed">
             AI only reads your tasks and related metadata. It never changes your data automatically, and
             every action requires your approval.
           </div>
         </section>
 
         {/* Activity snapshot */}
-        <section className="p-6 rounded-2xl glass-card card-hover border border-indigo-500/15 space-y-4">
+        <section className="p-6 glass-card card-hover space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">
@@ -278,7 +278,7 @@ export default function ProfileClient({ name, email, createdAtISO }: ProfileClie
       </div>
 
       {/* Account actions — intentional buttons */}
-      <section className="p-6 md:p-7 rounded-2xl glass-card card-hover border border-indigo-500/15 space-y-4">
+      <section className="p-6 md:p-7 glass-card card-hover space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-sm font-semibold text-slate-50 tracking-[0.16em] uppercase">

@@ -193,7 +193,6 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
   }
   return (
     <div className="space-y-6">
-
       {/* Compact header for the AI column */}
       <div className="mb-2">
         <h4 className="text-slate-50 font-semibold">Assistant</h4>

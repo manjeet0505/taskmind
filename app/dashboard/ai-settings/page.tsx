@@ -28,22 +28,22 @@ export default function AISettingsPage() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-50 mb-2">AI Settings</h1>
-        <p className="text-slate-300">
+        <h1 className="text-3xl font-bold text-slate-50 mb-2 tracking-tight">AI Settings</h1>
+        <p className="text-slate-300 text-lg">
           Control how AI assists you. All features remain optional and require your approval.
         </p>
       </div>
 
       {/* Save indicator */}
       {saved && (
-        <div className="mb-6 p-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-200 text-sm fade-slide-up">
+        <div className="mb-6 p-3 glass-card bg-emerald-500/10 text-emerald-200 text-sm fade-slide-up">
           ✓ Settings saved
         </div>
       )}
 
       <div className="space-y-6">
-        {/* Section 1: AI Enable/Disable */}
-        <section className="p-6 rounded-xl glass-card card-hover">
+        {/* Section 1: AI Enable/Disable — AI accent */}
+        <section className="p-6 glass-card card-hover">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <h2 className="text-xl font-semibold text-slate-50 mb-2">AI Assistance</h2>
@@ -71,9 +71,9 @@ export default function AISettingsPage() {
         </section>
 
         {/* Section 2: Insights Frequency */}
-        <section className="p-6 rounded-xl glass-card card-hover">
+        <section className="p-6 glass-card card-hover">
           <h2 className="text-xl font-semibold text-slate-50 mb-2">Insights Frequency</h2>
-          <p className="text-slate-300 text-sm mb-4">
+          <p className="text-slate-400 text-sm mb-4">
             Choose how often you want AI insights.
           </p>
           <div className="space-y-3">
@@ -126,9 +126,9 @@ export default function AISettingsPage() {
         </section>
 
         {/* Section 3: AI Response Style */}
-        <section className="p-6 rounded-xl glass-card card-hover">
+        <section className="p-6 glass-card card-hover">
           <h2 className="text-xl font-semibold text-slate-50 mb-2">AI Response Style</h2>
-          <p className="text-slate-300 text-sm mb-4">
+          <p className="text-slate-400 text-sm mb-4">
             Control how much detail the AI provides.
           </p>
           <div className="space-y-3">
@@ -180,8 +180,8 @@ export default function AISettingsPage() {
           )}
         </section>
 
-        {/* Section 4: Transparency Notice */}
-        <section className="p-6 rounded-xl glass-card border border-indigo-500/20 bg-indigo-500/5">
+        {/* Section 4: Transparency Notice — highlighted */}
+        <section className="p-6 glass-card-strong card-hover">
           <div className="flex items-start gap-4">
             <div className="text-2xl shrink-0">🔒</div>
             <div className="flex-1">

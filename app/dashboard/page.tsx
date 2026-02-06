@@ -138,8 +138,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-full">
-      {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto">
+      {/* Main Content — no container, content flows on background */}
+      <div className="relative z-10">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-50 mb-2 tracking-tight">Welcome back! 👋</h1>
@@ -159,7 +159,7 @@ export default function Dashboard() {
           {/* Tasks Section */}
           <div className="lg:col-span-2">
             {/* Quick Add Task — CTA with subtle glow */}
-            <div className="mb-8 p-6 rounded-2xl glass-card card-hover border border-indigo-500/20">
+            <div className="mb-8 p-6 glass-card card-hover">
               <button
                 onClick={() => {
                   setEditingTask(null);
@@ -172,7 +172,7 @@ export default function Dashboard() {
             </div>
 
             {/* Filters — pill-style with active gradient */}
-            <div className="mb-8 p-6 rounded-2xl glass-card card-hover border border-indigo-500/15">
+            <div className="mb-8 p-6 glass-card card-hover">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"

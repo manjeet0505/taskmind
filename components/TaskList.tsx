@@ -77,7 +77,7 @@ export default function TaskList({
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 px-6 rounded-xl glass-card border border-slate-700/50 bg-slate-900/30">
+      <div className="text-center py-12 px-6 glass-card card-hover">
         <p className="text-slate-50 font-medium mb-2">You don&apos;t have any tasks yet.</p>
         <p className="text-slate-300 text-sm max-w-sm mx-auto mb-6">
           Tasks are where you capture what matters. Add one and let AI help you prioritize and plan your day.
@@ -99,7 +99,7 @@ export default function TaskList({
       {tasks.map((task) => (
         <div
           key={task.id}
-          className={`p-5 rounded-xl glass-card card-hover`}
+          className="p-5 glass-card card-hover"
         >
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-start gap-4 flex-1">

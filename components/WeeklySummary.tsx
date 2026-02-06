@@ -50,20 +50,28 @@ function cacheSummary(data: WeeklySummaryData): void {
 }
 
 export default function WeeklySummary() {
-  const [summary, setSummary] = useState<WeeklySummaryData | null>(getCachedSummary());
+  // Always start with server-safe state to avoid hydration mismatch (no localStorage on server)
+  const [summary, setSummary] = useState<WeeklySummaryData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [aiEnabled, setAiEnabled] = useState(() => isAIEnabled());
+  const [aiEnabled, setAiEnabled] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // After mount, read from localStorage so server and first client render match
+  useEffect(() => {
+    setMounted(true);
+    setSummary(getCachedSummary());
+    setAiEnabled(isAIEnabled());
+  }, []);
 
   // Listen for AI preference changes
   useEffect(() => {
-    const handleChange = () => {
-      setAiEnabled(isAIEnabled());
-    };
+    if (!mounted) return;
+    const handleChange = () => setAiEnabled(isAIEnabled());
     window.addEventListener("aiPreferencesChanged", handleChange);
     return () => window.removeEventListener("aiPreferencesChanged", handleChange);
-  }, []);
+  }, [mounted]);
 
   const fetchSummary = async () => {
     if (!aiEnabled) {
@@ -113,16 +121,39 @@ export default function WeeklySummary() {
     }
   };
 
-  // Auto-expand if we have cached summary
+  // Auto-expand if we have cached summary (client-only after hydration)
   useEffect(() => {
-    if (summary && !expanded) {
+    if (mounted && summary && !expanded) {
       setExpanded(true);
     }
-  }, [summary, expanded]);
+  }, [mounted, summary, expanded]);
+
+  // Before mount, render the same "no summary" state as server to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="p-6 glass-card card-hover">
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
+            <p className="text-slate-300 text-sm">Reflect on your productivity this week</p>
+          </div>
+        </div>
+        <p className="text-slate-400 text-sm mt-3 mb-4">
+          Get insights about your task management patterns and progress.
+        </p>
+        <button
+          disabled
+          className="px-4 py-2 rounded-xl gradient-btn text-white text-sm font-semibold opacity-50"
+        >
+          View Weekly Summary
+        </button>
+      </div>
+    );
+  }
 
   if (!aiEnabled) {
     return (
-      <div className="p-6 rounded-xl glass-card border border-slate-700/50">
+      <div className="p-6 glass-card card-hover">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
@@ -142,7 +173,7 @@ export default function WeeklySummary() {
 
   if (error && !summary) {
     return (
-      <div className="p-6 rounded-xl glass-card border border-slate-700/50">
+      <div className="p-6 glass-card card-hover">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
@@ -165,7 +196,7 @@ export default function WeeklySummary() {
 
   if (!summary && !loading) {
     return (
-      <div className="p-6 rounded-xl glass-card border border-slate-700/50 card-hover">
+      <div className="p-6 glass-card card-hover">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
@@ -188,7 +219,7 @@ export default function WeeklySummary() {
 
   if (loading && !summary) {
     return (
-      <div className="p-6 rounded-xl glass-card border border-slate-700/50">
+      <div className="p-6 glass-card">
         <div className="flex items-start justify-between mb-2">
           <div>
             <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
@@ -203,7 +234,7 @@ export default function WeeklySummary() {
   if (!summary) return null;
 
   return (
-    <div className="p-6 rounded-xl glass-card border border-indigo-500/20 bg-indigo-500/5 card-hover">
+    <div className="p-6 glass-card-strong card-hover">
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
@@ -242,7 +273,7 @@ export default function WeeklySummary() {
 
           {/* Suggestion */}
           {summary.suggestion && (
-            <div className="pt-3 border-t border-slate-700/50">
+            <div className="pt-3 border-t border-slate-700/30">
               <h4 className="text-slate-50 font-medium mb-2 text-sm">Suggestion</h4>
               <p className="text-slate-300 text-sm">{summary.suggestion}</p>
             </div>

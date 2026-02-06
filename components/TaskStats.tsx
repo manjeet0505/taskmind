@@ -57,7 +57,7 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="p-5 rounded-2xl glass-card card-hover border border-indigo-500/15"
+          className="p-5 glass-card card-hover"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-2xl stat-icon-glow">{stat.icon}</span>

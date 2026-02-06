@@ -77,26 +77,6 @@ main {
 .fade-slide-up { animation: fade-slide-up 420ms cubic-bezier(.2,.9,.2,1) both; }
 .message-pop { animation: message-pop 240ms cubic-bezier(.2,.9,.2,1) both; }
 
-/* Glass-card: soft tint, subtle border, gentle blur */
-.glass-card {
-  background: linear-gradient(150deg, rgba(15,23,42,0.76), rgba(15,23,42,0.72));
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 16px;
-  box-shadow: 0 18px 45px rgba(15,23,42,0.45);
-}
-.glass-card-strong {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.45), transparent 55%),
-    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.42), transparent 55%),
-    linear-gradient(145deg, rgba(15,23,42,0.96), rgba(15,23,42,0.82));
-  border: 1px solid rgba(165, 180, 252, 0.85);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 22px 55px rgba(15,23,42,0.75);
-}
-
 /* Gradient primary button */
 .gradient-btn {
   background: linear-gradient(120deg, #6366f1 0%, #8b5cf6 33%, #0ea5e9 66%, #22d3ee 100%);
@@ -146,69 +126,46 @@ main {
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
 }
 
-/* ========== MAIN CONTENT AREA — same gradient family, reduced intensity ========== */
+/* ========== MAIN CONTENT AREA — transparent, let body background flow through ========== */
 .content-area {
-  background:
-    radial-gradient(ellipse 120% 80% at 20% 0%, rgba(99, 102, 241, 0.08), transparent 50%),
-    radial-gradient(ellipse 100% 60% at 80% 20%, rgba(139, 92, 246, 0.06), transparent 45%),
-    radial-gradient(ellipse 80% 70% at 50% 100%, rgba(56, 189, 248, 0.05), transparent 50%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.35) 100%);
+  background: transparent;
   min-height: 100%;
 }
 
-/* ========== UNIFIED CARD SYSTEM — floating intelligent modules ========== */
+/* ========== UNIFIED CARD SYSTEM — translucent floating modules, no hard borders ========== */
 .glass-card {
-  background: linear-gradient(155deg, rgba(15, 23, 42, 0.82), rgba(30, 41, 59, 0.78));
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  background: rgba(15, 23, 42, 0.35);
+  border: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 0.5px rgba(99, 102, 241, 0.08);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .glass-card:hover {
-  border-color: rgba(129, 140, 248, 0.28);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.25),
-    0 0 24px rgba(99, 102, 241, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  background: rgba(15, 23, 42, 0.42);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.18), 0 0 0 0.5px rgba(129, 140, 248, 0.12), 0 0 20px rgba(99, 102, 241, 0.06);
 }
 
 .glass-card-strong {
-  background:
-    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.12), transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.1), transparent 50%),
-    linear-gradient(155deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.84));
-  border: 1px solid rgba(129, 140, 248, 0.25);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 16px;
-  box-shadow:
-    0 6px 28px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 0 40px rgba(99, 102, 241, 0.06);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(15, 23, 42, 0.45);
+  border: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18), 0 0 0 0.5px rgba(129, 140, 248, 0.12), 0 0 30px rgba(99, 102, 241, 0.08);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 .glass-card-strong:hover {
-  border-color: rgba(129, 140, 248, 0.35);
-  box-shadow:
-    0 10px 36px rgba(0, 0, 0, 0.28),
-    0 0 32px rgba(99, 102, 241, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  background: rgba(15, 23, 42, 0.52);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(129, 140, 248, 0.18), 0 0 40px rgba(99, 102, 241, 0.1);
 }
 
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.28),
-    0 0 28px rgba(99, 102, 241, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  border-color: rgba(129, 140, 248, 0.3);
+  transform: translateY(-1px);
 }
 
 /* CTA glow for primary actions (e.g. Add Task) */
