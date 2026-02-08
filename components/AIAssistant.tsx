@@ -23,6 +23,14 @@ export interface AISuggestion {
   reason: string;
 }
 
+/** Deadline risk API response (read-only early warning, no actions). */
+interface DeadlineRiskState {
+  overallRisk: "low" | "medium" | "high";
+  warnings: Array<{ type: string; message: string; reason: string }>;
+  note?: string;
+  unavailable?: boolean;
+}
+
 interface AIAssistantProps {
   tasks: Task[];
   onTaskUpdated?: () => void;
@@ -32,6 +40,9 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
   const [insights, setInsights] = React.useState<null | any>(null);
   const [insightsLoading, setInsightsLoading] = React.useState(false);
   const [aiEnabled, setAiEnabled] = React.useState(() => isAIEnabled());
+
+  const [deadlineRisk, setDeadlineRisk] = React.useState<DeadlineRiskState | null>(null);
+  const [deadlineRiskLoading, setDeadlineRiskLoading] = React.useState(false);
 
   const hasTasks = tasks && tasks.length > 0;
 
@@ -43,6 +54,34 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
     window.addEventListener("aiPreferencesChanged", handleChange);
     return () => window.removeEventListener("aiPreferencesChanged", handleChange);
   }, []);
+
+  // Fetch deadline risk when user has tasks (read-only early warning)
+  React.useEffect(() => {
+    if (!hasTasks) {
+      setDeadlineRisk(null);
+      return;
+    }
+    let cancelled = false;
+    setDeadlineRiskLoading(true);
+    fetch("/api/ai/deadline-risk", { method: "GET", credentials: "same-origin" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        setDeadlineRisk({
+          overallRisk: data.overallRisk ?? "low",
+          warnings: Array.isArray(data.warnings) ? data.warnings : [],
+          note: data.note,
+          unavailable: data.unavailable === true,
+        });
+      })
+      .catch(() => {
+        if (!cancelled) setDeadlineRisk({ overallRisk: "low", warnings: [], unavailable: true });
+      })
+      .finally(() => {
+        if (!cancelled) setDeadlineRiskLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [hasTasks, tasks.length]);
 
   const [chatInput, setChatInput] = React.useState("");
   const [messages, setMessages] = React.useState<Array<{ from: "user" | "assistant"; text: string }>>([]);
@@ -197,6 +236,53 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
       <div className="mb-2">
         <h4 className="ai-heading font-semibold">Assistant</h4>
         <p className="text-slate-300/80 text-xs">Daily briefing and task-aware chat</p>
+      </div>
+
+      {/* Deadline Risk — read-only early warning, no actions */}
+      <div className="p-4 glass-card fade-slide-up card-hover">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-xl" aria-hidden>⏱</span>
+          <div>
+            <h4 className="ai-heading font-semibold text-sm">Deadline Risk</h4>
+            <p className="text-slate-400 text-xs">Early-warning only · no changes to your tasks</p>
+          </div>
+        </div>
+        {deadlineRiskLoading ? (
+          <p className="text-slate-400 text-sm">Checking deadlines…</p>
+        ) : deadlineRisk?.unavailable ? (
+          <p className="text-slate-400 text-sm">Deadline risk analysis is unavailable right now.</p>
+        ) : !deadlineRisk ? (
+          <p className="text-slate-400 text-sm">Add tasks with due dates to see risk insights.</p>
+        ) : deadlineRisk.warnings.length === 0 ? (
+          <p className="text-slate-100 text-sm">Your deadlines look manageable.</p>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  deadlineRisk.overallRisk === "high"
+                    ? "bg-amber-500/20 text-amber-200"
+                    : deadlineRisk.overallRisk === "medium"
+                    ? "bg-amber-500/15 text-amber-100"
+                    : "bg-slate-600/40 text-slate-300"
+                }`}
+              >
+                {deadlineRisk.overallRisk} risk
+              </span>
+            </div>
+            <ul className="space-y-2">
+              {deadlineRisk.warnings.slice(0, 3).map((w, i) => (
+                <li key={i} className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-600/40">
+                  <p className="text-slate-100 text-sm font-medium">{w.message}</p>
+                  <p className="text-slate-400 text-xs mt-0.5">{w.reason}</p>
+                </li>
+              ))}
+            </ul>
+            {deadlineRisk.note && (
+              <p className="text-slate-400 text-xs border-t border-slate-700/60 pt-2">{deadlineRisk.note}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* AI Insights — gradient-tinted card with glow */}
