@@ -232,152 +232,102 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
   }
   return (
     <div className="space-y-6">
-      {/* Compact header for the AI column */}
-      <div className="mb-2">
-        <h4 className="ai-heading font-semibold">Assistant</h4>
-        <p className="text-slate-300/80 text-xs">Daily briefing and task-aware chat</p>
+      <div className="pb-1">
+        <h3 className="text-slate-400 font-medium text-xs uppercase tracking-wider">Assistant</h3>
+        <p className="text-slate-500 text-xs mt-0.5">Support and insights</p>
       </div>
 
-      {/* Deadline Risk — read-only early warning, no actions */}
-      <div className="p-4 glass-card fade-slide-up card-hover">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-xl" aria-hidden>⏱</span>
+      {/* ZONE 1 — Today's focus: single primary AI block */}
+      <div className="p-5 glass-card-strong fade-slide-up">
+        <div className="flex items-center justify-between gap-3 mb-3">
           <div>
-            <h4 className="ai-heading font-semibold text-sm">Deadline Risk</h4>
-            <p className="text-slate-400 text-xs">Early-warning only · no changes to your tasks</p>
+            <h4 className="text-slate-50 font-semibold text-sm">Today&apos;s Focus</h4>
+            <p className="text-slate-400 text-xs mt-0.5">AI insights for your tasks</p>
           </div>
+          <button
+            aria-label="Get AI Insights"
+            onClick={fetchInsights}
+            disabled={!hasTasks || insightsLoading || !aiEnabled}
+            className="shrink-0 px-3 py-1.5 rounded-lg gradient-btn transition-smooth text-white text-xs font-medium disabled:opacity-40"
+          >
+            {insightsLoading ? "…" : "Get Insights"}
+          </button>
+        </div>
+        <div className="min-h-10">
+          {insights ? (
+            <p className="text-slate-200 text-sm leading-relaxed">{insights.summary}</p>
+          ) : !aiEnabled ? (
+            <p className="text-slate-500 text-sm">
+              Enable AI in <a href="/dashboard/ai-settings" className="text-indigo-400/90 hover:text-indigo-300">Settings</a> for insights.
+            </p>
+          ) : (
+            <p className="text-slate-500 text-sm">
+              Request insights to see what to focus on today.
+            </p>
+          )}
+          {insights && insights.focusTasks && insights.focusTasks.length > 0 && (
+            <ul className="text-xs text-slate-400 mt-2 space-y-1 list-disc list-inside">
+              {insights.focusTasks.slice(0, 2).map((f: { title: string; reason?: string }, i: number) => (
+                <li key={i}>{f.title}{f.reason && <span className="text-slate-500"> — {f.reason}</span>}</li>
+              ))}
+            </ul>
+          )}
+          {insights?.productivityTip && (
+            <p className="text-slate-500 text-[11px] mt-2">Tip: {insights.productivityTip}</p>
+          )}
+        </div>
+      </div>
+
+      {/* ZONE 3 — Deadline Risk: support, lighter */}
+      <div className="p-4 glass-card fade-slide-up">
+        <div className="flex items-center gap-2.5 mb-2">
+          <span className="text-base text-slate-500" aria-hidden>⏱</span>
+          <h4 className="text-slate-400 font-medium text-xs">Deadline Risk</h4>
         </div>
         {deadlineRiskLoading ? (
-          <p className="text-slate-400 text-sm">Checking deadlines…</p>
+          <p className="text-slate-500 text-xs">Checking…</p>
         ) : deadlineRisk?.unavailable ? (
-          <p className="text-slate-400 text-sm">Deadline risk analysis is unavailable right now.</p>
+          <p className="text-slate-500 text-xs">Unavailable right now.</p>
         ) : !deadlineRisk ? (
-          <p className="text-slate-400 text-sm">Add tasks with due dates to see risk insights.</p>
+          <p className="text-slate-500 text-xs">Add tasks with due dates to see risk.</p>
         ) : deadlineRisk.warnings.length === 0 ? (
-          <p className="text-slate-100 text-sm">Your deadlines look manageable.</p>
+          <p className="text-slate-300 text-xs">Your deadlines look manageable.</p>
         ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span
-                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                  deadlineRisk.overallRisk === "high"
-                    ? "bg-amber-500/20 text-amber-200"
-                    : deadlineRisk.overallRisk === "medium"
-                    ? "bg-amber-500/15 text-amber-100"
-                    : "bg-slate-600/40 text-slate-300"
-                }`}
-              >
-                {deadlineRisk.overallRisk} risk
-              </span>
-            </div>
-            <ul className="space-y-2">
+          <div className="space-y-2">
+            <span
+              className={`inline-block text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                deadlineRisk.overallRisk === "high"
+                  ? "bg-amber-500/15 text-amber-200/90"
+                  : deadlineRisk.overallRisk === "medium"
+                  ? "bg-amber-500/10 text-amber-100/80"
+                  : "bg-slate-600/30 text-slate-400"
+              }`}
+            >
+              {deadlineRisk.overallRisk} risk
+            </span>
+            <ul className="space-y-1.5">
               {deadlineRisk.warnings.slice(0, 3).map((w, i) => (
-                <li key={i} className="p-2.5 rounded-lg bg-slate-800/50 border border-slate-600/40">
-                  <p className="text-slate-100 text-sm font-medium">{w.message}</p>
-                  <p className="text-slate-400 text-xs mt-0.5">{w.reason}</p>
+                <li key={i} className="text-xs">
+                  <p className="text-slate-200">{w.message}</p>
+                  <p className="text-slate-500 mt-0.5">{w.reason}</p>
                 </li>
               ))}
             </ul>
             {deadlineRisk.note && (
-              <p className="text-slate-400 text-xs border-t border-slate-700/60 pt-2">{deadlineRisk.note}</p>
+              <p className="text-slate-500 text-[11px] pt-1.5 mt-1.5 border-t border-slate-700/40">{deadlineRisk.note}</p>
             )}
           </div>
         )}
       </div>
 
-      {/* AI Insights — gradient-tinted card with glow */}
-      <div className="p-4 glass-card-strong fade-slide-up card-hover">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="ai-icon-glow">
-              <span className="text-2xl">🤖</span>
-            </div>
-            <div>
-              <h4 className="ai-heading font-semibold text-sm">AI Insights for Today</h4>
-              <p className="ai-heading-subtle text-xs">Based on your current tasks</p>
-            </div>
-          </div>
-          <div>
-            <button
-              aria-label="Get AI Insights"
-              onClick={fetchInsights}
-              disabled={!hasTasks || insightsLoading || !aiEnabled}
-              className="px-3 py-1.5 rounded-full gradient-btn btn-hover-glow transition-smooth text-white text-[11px] font-semibold disabled:opacity-40"
-            >
-              {insightsLoading ? "Thinking..." : "Get AI Insights"}
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <div>
-            {insights ? (
-              <p className="text-slate-100 text-sm truncate-ellipsis">{insights.summary}</p>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-slate-300/90 text-sm">
-                  AI insights help you decide what to focus on today. You can request them anytime—they&apos;re optional.
-                </p>
-                {!aiEnabled ? (
-                  <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-600/40">
-                    <p className="text-slate-300 text-xs mb-2">
-                      AI assistance is disabled. Enable it in{" "}
-                      <a href="/dashboard/ai-settings" className="text-indigo-400 hover:text-indigo-300 underline">
-                        AI Settings
-                      </a>{" "}
-                      to get insights.
-                    </p>
-                  </div>
-                ) : (
-                  <button
-                    aria-label="Get AI Insights"
-                    onClick={fetchInsights}
-                    disabled={!hasTasks || insightsLoading}
-                    className="px-3 py-2 rounded-lg gradient-btn btn-hover-glow transition-smooth text-white text-xs font-semibold disabled:opacity-50"
-                  >
-                    {insightsLoading ? "Thinking…" : "Get AI Insights"}
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Short focus list: max 2 items (muted) */}
-          {insights && insights.focusTasks && insights.focusTasks.length > 0 && (
-            <ul className="text-xs text-slate-200 list-disc list-inside mt-2 space-y-1.5">
-              {insights.focusTasks.slice(0, 2).map((f: any, i: number) => (
-                <li key={`focus-${i}`}>{f.title}{f.reason && <div className="text-xs text-slate-500 mt-0.5">{f.reason}</div>}</li>
-              ))}
-              {insights.focusTasks.length > 2 && (
-                <li className="text-[11px] text-slate-300/70">
-                  +{insights.focusTasks.length - 2} more
-                </li>
-              )}
-            </ul>
-          )}
-
-          {/* Minimal warnings & tip (muted) */}
-          {insights && insights.warnings && insights.warnings.length > 0 && (
-            <div className="mt-2 text-[11px] text-amber-200/90">
-              Warnings: {insights.warnings.slice(0, 2).join(" • ")}
-            </div>
-          )}
-          {insights && insights.productivityTip && (
-            <div className="mt-2 text-[11px] text-slate-200/80">
-              Tip: {insights.productivityTip}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* AI Suggestions — optional, user must Apply or Ignore */}
+      {/* AI Suggestions — secondary */}
       <div className="space-y-2">
-        <h4 className="ai-heading-subtle font-semibold text-xs uppercase tracking-wider">
+        <h4 className="text-slate-500 font-medium text-[11px] uppercase tracking-wider">
           AI suggests
         </h4>
         {pendingSuggestions.length === 0 ? (
-          <p className="text-slate-400 text-xs py-2 px-1">
-            No AI suggestions right now. Your tasks look well organized.
+          <p className="text-slate-500 text-xs py-1">
+            No suggestions. Your tasks look organized.
           </p>
         ) : (
           pendingSuggestions.map(({ id, suggestion }) => {
@@ -389,7 +339,7 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
             return (
               <div
                 key={id}
-                className="p-3 rounded-xl bg-slate-800/60 border border-slate-600/60 text-sm"
+                className="p-3 rounded-lg bg-slate-800/40 text-sm"
               >
                 <p className="text-slate-200 mb-1.5">{suggestion.reason}</p>
                 <p className="text-slate-400 text-xs mb-2">
@@ -419,15 +369,14 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
         )}
       </div>
 
-      <div className="my-4 border-t border-slate-700/60" />
+      <div className="pt-2" />
 
-      {/* AI Chat — conversation mode (soft gradient glass card) */}
-      <div className="p-4 glass-card fade-slide-up flex flex-col card-hover">
-        <h4 className="ai-heading font-semibold mb-1.5">AI Chat</h4>
-        <div className="text-xs text-slate-300/85 mb-3">
-          Ask about priorities, focus windows, or what to ship next. The assistant only uses your
-          task data.
-        </div>
+      {/* AI Chat — secondary */}
+      <div className="p-4 glass-card fade-slide-up flex flex-col">
+        <h4 className="text-slate-400 font-medium text-xs mb-1">Chat</h4>
+        <p className="text-slate-500 text-[11px] mb-3">
+          Ask about priorities or what to do next. Uses only your task data.
+        </p>
 
         <div ref={messagesRef} className="max-h-56 overflow-y-auto mb-3 space-y-3 p-1.5 pr-1">
           {messages.length === 0 ? (
@@ -488,10 +437,9 @@ export default function AIAssistant({ tasks, onTaskUpdated }: AIAssistantProps) 
           </button>
         </div>
 
-        {/* Disclaimer moved to bottom of the card */}
-        <div className="mt-3 text-[10px] text-slate-300/70">
-          Note: The assistant only reads your tasks and will never write to your data automatically.
-        </div>
+        <p className="mt-3 text-[10px] text-slate-500">
+          Assistant only reads your tasks; it never changes data automatically.
+        </p>
       </div>
 
 

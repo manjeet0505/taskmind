@@ -53,22 +53,17 @@ export default function TaskStats({ tasks }: TaskStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="p-5 glass-card card-hover"
+          className="p-4 glass-card"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-2xl stat-icon-glow">{stat.icon}</span>
-            <span
-              className={`text-[10px] uppercase tracking-[0.2em] text-slate-400 bg-linear-to-r ${stat.accent} bg-clip-text text-transparent`}
-            >
-              Metric
-            </span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-lg opacity-80">{stat.icon}</span>
           </div>
-          <h3 className="text-slate-300 text-xs font-medium mb-1.5">{stat.label}</h3>
-          <p className="text-2xl font-semibold text-slate-50 tracking-tight">
+          <p className="text-slate-500 text-xs font-medium mb-0.5">{stat.label}</p>
+          <p className="text-xl font-semibold text-slate-200 tracking-tight">
             {stat.value}
           </p>
         </div>

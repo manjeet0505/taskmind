@@ -131,21 +131,19 @@ export default function WeeklySummary() {
   // Before mount, render the same "no summary" state as server to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="p-6 glass-card card-hover">
-        <div className="flex items-start justify-between mb-2">
+      <div className="p-4 glass-card">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-            <p className="text-slate-300 text-sm">Reflect on your productivity this week</p>
+            <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
+            <p className="text-slate-500 text-xs mt-0.5">Reflect on your week</p>
           </div>
         </div>
-        <p className="text-slate-400 text-sm mt-3 mb-4">
-          Get insights about your task management patterns and progress.
-        </p>
+        <p className="text-slate-500 text-xs mt-3 mb-3">Get insights about your progress.</p>
         <button
           disabled
-          className="px-4 py-2 rounded-xl gradient-btn text-white text-sm font-semibold opacity-50"
+          className="px-3 py-1.5 rounded-lg gradient-btn text-white text-xs font-medium opacity-50"
         >
-          View Weekly Summary
+          View Summary
         </button>
       </div>
     );
@@ -153,19 +151,13 @@ export default function WeeklySummary() {
 
   if (!aiEnabled) {
     return (
-      <div className="p-6 glass-card card-hover">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-            <p className="text-slate-300 text-sm">AI assistance is disabled</p>
-          </div>
+      <div className="p-4 glass-card">
+        <div>
+          <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
+          <p className="text-slate-500 text-xs mt-0.5">AI is disabled</p>
         </div>
-        <p className="text-slate-400 text-sm mt-3">
-          Enable AI in{" "}
-          <a href="/dashboard/ai-settings" className="text-indigo-400 hover:text-indigo-300 underline">
-            AI Settings
-          </a>{" "}
-          to view your weekly summary.
+        <p className="text-slate-500 text-xs mt-3">
+          Enable in <a href="/dashboard/ai-settings" className="text-indigo-400/90 hover:text-indigo-300">AI Settings</a> to view.
         </p>
       </div>
     );
@@ -173,22 +165,17 @@ export default function WeeklySummary() {
 
   if (error && !summary) {
     return (
-      <div className="p-6 glass-card card-hover">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-            <p className="text-slate-300 text-sm">Reflect on your week</p>
-          </div>
+      <div className="p-4 glass-card">
+        <div>
+          <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
         </div>
-        <p className="text-slate-400 text-sm mt-3 mb-4">
-          Your weekly summary is not available right now.
-        </p>
+        <p className="text-slate-500 text-xs mt-3 mb-3">Not available right now.</p>
         <button
           onClick={fetchSummary}
           disabled={loading}
-          className="px-4 py-2 rounded-xl gradient-btn text-white text-sm font-semibold disabled:opacity-50"
+          className="px-3 py-1.5 rounded-lg gradient-btn text-white text-xs font-medium disabled:opacity-50"
         >
-          {loading ? "Loading..." : "Try Again"}
+          {loading ? "…" : "Try again"}
         </button>
       </div>
     );
@@ -196,22 +183,18 @@ export default function WeeklySummary() {
 
   if (!summary && !loading) {
     return (
-      <div className="p-6 glass-card card-hover">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-            <p className="text-slate-300 text-sm">Reflect on your productivity this week</p>
-          </div>
+      <div className="p-4 glass-card">
+        <div>
+          <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
+          <p className="text-slate-500 text-xs mt-0.5">Your week in review</p>
         </div>
-        <p className="text-slate-400 text-sm mt-3 mb-4">
-          Get insights about your task management patterns and progress.
-        </p>
+        <p className="text-slate-500 text-xs mt-3 mb-3">Get insights about your progress.</p>
         <button
           onClick={fetchSummary}
           disabled={loading}
-          className="px-4 py-2 rounded-xl gradient-btn text-white text-sm font-semibold disabled:opacity-50"
+          className="px-3 py-1.5 rounded-lg gradient-btn text-white text-xs font-medium disabled:opacity-50"
         >
-          {loading ? "Generating..." : "View Weekly Summary"}
+          {loading ? "…" : "View Summary"}
         </button>
       </div>
     );
@@ -219,14 +202,11 @@ export default function WeeklySummary() {
 
   if (loading && !summary) {
     return (
-      <div className="p-6 glass-card">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-            <p className="text-slate-300 text-sm">Reflect on your week</p>
-          </div>
+      <div className="p-4 glass-card">
+        <div>
+          <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
         </div>
-        <p className="text-slate-400 text-sm mt-3">Generating your weekly summary...</p>
+        <p className="text-slate-500 text-xs mt-3">Generating…</p>
       </div>
     );
   }
@@ -234,15 +214,15 @@ export default function WeeklySummary() {
   if (!summary) return null;
 
   return (
-    <div className="p-6 glass-card-strong card-hover">
-      <div className="flex items-start justify-between mb-4">
+    <div className="p-4 glass-card">
+      <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-slate-50 mb-1">Weekly AI Reflection</h3>
-          <p className="text-slate-300 text-sm">Your week in review</p>
+          <h3 className="text-slate-300 font-medium text-sm">Weekly summary</h3>
+          <p className="text-slate-500 text-xs mt-0.5">Your week in review</p>
         </div>
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-slate-400 hover:text-slate-200 transition text-sm"
+          className="text-slate-500 hover:text-slate-300 text-xs transition"
           aria-label={expanded ? "Collapse" : "Expand"}
         >
           {expanded ? "−" : "+"}
@@ -250,45 +230,34 @@ export default function WeeklySummary() {
       </div>
 
       {expanded && (
-        <div className="space-y-4 fade-slide-up">
-          {/* Summary */}
-          <div>
-            <p className="text-slate-200 leading-relaxed">{summary.summary}</p>
-          </div>
-
-          {/* Highlights */}
+        <div className="space-y-3 mt-3 pt-3 border-t border-slate-700/30 fade-slide-up">
+          <p className="text-slate-300 text-sm leading-relaxed">{summary.summary}</p>
           {summary.highlights && summary.highlights.length > 0 && (
             <div>
-              <h4 className="text-slate-50 font-medium mb-2 text-sm">Highlights</h4>
-              <ul className="space-y-2">
+              <h4 className="text-slate-400 font-medium text-xs mb-1.5">Highlights</h4>
+              <ul className="space-y-1">
                 {summary.highlights.map((highlight, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-slate-300 text-sm">
-                    <span className="text-green-400 mt-0.5 shrink-0">✓</span>
+                  <li key={idx} className="flex items-start gap-2 text-slate-400 text-xs">
+                    <span className="text-emerald-400/80 shrink-0">✓</span>
                     <span>{highlight}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
-
-          {/* Suggestion */}
           {summary.suggestion && (
-            <div className="pt-3 border-t border-slate-700/30">
-              <h4 className="text-slate-50 font-medium mb-2 text-sm">Suggestion</h4>
-              <p className="text-slate-300 text-sm">{summary.suggestion}</p>
+            <div>
+              <h4 className="text-slate-400 font-medium text-xs mb-1">Suggestion</h4>
+              <p className="text-slate-400 text-xs">{summary.suggestion}</p>
             </div>
           )}
-
-          {/* Refresh button */}
-          <div className="pt-2">
-            <button
-              onClick={fetchSummary}
-              disabled={loading}
-              className="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition disabled:opacity-50"
-            >
-              {loading ? "Refreshing..." : "Refresh Summary"}
-            </button>
-          </div>
+          <button
+            onClick={fetchSummary}
+            disabled={loading}
+            className="text-indigo-400/90 hover:text-indigo-300 text-xs font-medium disabled:opacity-50"
+          >
+            {loading ? "…" : "Refresh"}
+          </button>
         </div>
       )}
     </div>

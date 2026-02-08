@@ -138,89 +138,75 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-full">
-      {/* Main Content — no container, content flows on background */}
       <div className="relative z-10">
-        {/* Welcome Section */}
-        <div className="section-spacing-lg">
-          <h1 className="text-page-title text-4xl text-slate-50 mb-2">Welcome back! 👋</h1>
-          <p className="text-body text-lg">Here&apos;s what you need to focus on today</p>
+        {/* ZONE 1 — Top focus: single clear entry point */}
+        <div className="mb-10">
+          <h1 className="text-page-title text-3xl md:text-4xl text-slate-50 mb-1.5">Welcome back</h1>
+          <p className="text-body text-base text-slate-400">Here&apos;s what you need to focus on today</p>
         </div>
 
-        {/* Weekly Summary */}
-        <div className="section-spacing">
+        {/* ZONE 4 — Secondary: weekly summary + stats, visually quiet */}
+        <div className="mb-8">
           <WeeklySummary />
         </div>
+        <div className="mb-8">
+          <TaskStats tasks={tasks} />
+        </div>
 
-        {/* Stats Section */}
-        <TaskStats tasks={tasks} />
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 section-spacing-lg">
-          {/* Tasks Section */}
-          <div className="lg:col-span-2">
-            {/* Quick Add Task — CTA with subtle glow */}
-            <div className="section-spacing p-6 glass-card card-hover">
+        {/* ZONE 2 + 3 — Core task work (primary) | AI support (secondary) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* ZONE 2 — Core: task list is main content */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="p-5 glass-card card-hover">
               <button
                 onClick={() => {
                   setEditingTask(null);
                   setShowTaskModal(true);
                 }}
-                className="w-full px-6 py-4 rounded-xl gradient-btn cta-glow btn-hover-glow transition-smooth text-white font-semibold flex items-center justify-center gap-2"
+                className="w-full px-5 py-3.5 rounded-xl gradient-btn cta-glow btn-hover-glow transition-smooth text-white font-semibold text-sm flex items-center justify-center gap-2"
               >
-                <span className="text-xl">+</span> Add New Task
+                <span className="text-lg">+</span> Add New Task
               </button>
             </div>
 
-            {/* Filters — pill-style with active gradient */}
-            <div className="section-spacing p-6 glass-card card-hover">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <input
-                  type="text"
-                  placeholder="Search tasks..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-4 py-3 rounded-xl bg-slate-900/50 border border-indigo-500/20 text-slate-50 placeholder-slate-400 focus:outline-none focus:border-indigo-400/60 focus:ring-2 focus:ring-indigo-400/20 transition-smooth"
-                />
-              </div>
-
+            <div className="p-5 glass-card card-hover">
+              <input
+                type="text"
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-600/40 text-slate-50 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-400/50 transition-smooth mb-4"
+              />
               <div className="flex flex-wrap gap-2">
-                {/* Status Filter */}
-                <div className="flex gap-2">
-                  {["all", "pending", "in-progress", "done"].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => setFilterStatus(status as any)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-smooth ${
-                        filterStatus === status
-                          ? "bg-linear-to-r from-indigo-500 to-violet-500 text-white border border-indigo-400/50 shadow-[0_0_16px_rgba(99,102,241,0.35)]"
-                          : "bg-slate-800/50 text-slate-200 border border-slate-600/50 hover:bg-slate-700/50 hover:border-indigo-500/30"
-                      }`}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Category Filter */}
-                <div className="flex gap-2">
-                  {categories.slice(0, 4).map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setFilterCategory(cat)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-smooth ${
-                        filterCategory === cat
-                          ? "bg-linear-to-r from-indigo-500 to-violet-500 text-white border border-indigo-400/50 shadow-[0_0_16px_rgba(99,102,241,0.35)]"
-                          : "bg-slate-800/50 text-slate-200 border border-slate-600/50 hover:bg-slate-700/50 hover:border-indigo-500/30"
-                      }`}
-                    >
-                      {cat === "all" ? "All Categories" : cat}
-                    </button>
-                  ))}
-                </div>
+                {["all", "pending", "in-progress", "done"].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setFilterStatus(status as any)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-smooth ${
+                      filterStatus === status
+                        ? "bg-indigo-500/90 text-white"
+                        : "bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+                {categories.slice(0, 4).map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setFilterCategory(cat)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-smooth ${
+                      filterCategory === cat
+                        ? "bg-indigo-500/90 text-white"
+                        : "bg-slate-800/50 text-slate-300 hover:bg-slate-700/50"
+                    }`}
+                  >
+                    {cat === "all" ? "All" : cat}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Task List */}
             <TaskList
               tasks={filteredTasks}
               onEditTask={handleEditTask}
@@ -233,8 +219,10 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* AI Assistant Sidebar */}
-          <AIAssistant tasks={tasks} onTaskUpdated={fetchTasks} />
+          {/* ZONE 3 — AI support: sidebar, lighter weight */}
+          <div className="lg:pt-0">
+            <AIAssistant tasks={tasks} onTaskUpdated={fetchTasks} />
+          </div>
         </div>
       </div>
 
